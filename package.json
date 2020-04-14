@@ -1,0 +1,76 @@
+{
+  "name": "monarc",
+  "author": "Matteo Cavalleri",
+  "version": "0.3.1",
+  "license": "MIT",
+  "module": "dist/monarc.esm.js",
+  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "homepage": "https://github.com/cvlmtg/monarc#README.md",
+  "repository": {
+    "url": "git+https://github.com/cvlmtg/monarc.git",
+    "type": "git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint && yarn test"
+    }
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "keywords": [
+    "react",
+    "context",
+    "store",
+    "autosave",
+    "undo",
+    "redo",
+    "reducer",
+    "state",
+    "functional",
+    "immutable",
+    "flux",
+    "redux",
+    "hooks"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "eslint --ext .tsx,.jsx,.ts,.js src/ test/",
+    "prepare": "tsdx build"
+  },
+  "peerDependencies": {
+    "react": ">=16.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-react": "^7.9.4",
+    "@types/jest": "^25.2.1",
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "core-js": "^3.6.5",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "husky": "^4.2.5",
+    "immutable": "^4.0.0-rc.12",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "tsdx": "^0.13.1",
+    "tslib": "^1.11.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "tiny-invariant": "^1.1.0"
+  }
+}
