@@ -25,7 +25,7 @@ export default function reduce(state, action) {
 This is the component that we will render at the root of our application tree and will manage the state. It is the equivalent of Flux's `Container` or Redux's `Provider`.
 
 *container.jsx*
-```js
+```jsx
 import { createContainer, useDispatch, useStore } from 'monarc';
 import counterReducer from './counter-reducer';
 
@@ -55,14 +55,14 @@ export default createContainer(AppContainer, counterReducer);
 The `createContainer` function accepts a component and one or more reducers we created earlier. If your application gets big, you can split your reducers in different modules and then pass them as an array to `createContainer`. When an action is fired, all the reducers will be called in order.
 
 *container.jsx*
-```js
+```jsx
 export default createContainer(AppContainer, [ counterReducer, otherReducer ]);
 ```
 
 If we want to enable **undo** / **redo** or **auto-save**, we just need to use a couple of extra functions:
 
-*application.js*
-```js
+*container.jsx*
+```jsx
 import { createContainer, withAutoSave, withUndoRedo } from 'monarc';
 import counterReducer from './counter-reducer';
 
@@ -99,7 +99,7 @@ This function accepts the following options:
     - if your state or partial state is not immutable, or your partial state is made assembling different parts of the state, you should memoize the return value of this function.
     - if you specify this option, you must also provide the *setState* function.
 
-```js
+```typescript
 function getState(state: any) => any
 ```
 
@@ -109,7 +109,7 @@ function getState(state: any) => any
 
   **NOTE:** if you specify this option, you must also provide the *getState* function.
 
-```js
+```typescript
 function setState(savedState: any, currentState: any) => any
 ```
 
@@ -165,7 +165,7 @@ This function accepts the following options:
 
   This is the function that gets called when the state needs to be saved.
 
-  ```js
+  ```typescript
   function onSave(state: any, callback?: () => void) => void
   ```
 
@@ -179,7 +179,7 @@ This function accepts the following options:
 
   This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
 
-  ```js
+  ```typescript
   onUpdate: (previous: any, updated: any, action: object) => boolean;
   ```
 
@@ -189,7 +189,7 @@ This function accepts the following options:
 
   Suppose we are writing a file navigation app for our Google Drive or Dropbox account. We have the usual icons and list visualization modes. When we change folder, we want to save the visualization mode for the folder we just left, not for the new one.
 
-  ```js
+  ```typescript
   onBeforeUpdate: (previous: any, updated: any, action: object) => boolean;
   ```
 

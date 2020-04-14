@@ -107,24 +107,26 @@ export default function reduce(state, action) {
 The store is now set up in the container. To mimic the Flux pattern, where the container updates its state when the store changes and then passes it down to its children, our new container will be rendered with a `store` prop which contains the store current state. Please note that in the `createContainer` function call we now have to pass the dispatcher as well.
 
 *before*
-```js
+```jsx
 import CounterStore from './counter-store';
 import { Container } from 'flux/utils';
 import { Component } from 'react';
 
 class CounterContainer extends Component {
   static getStores() {
-    return [CounterStore];
+    return [ CounterStore ];
   }
 
   static calculateState(prevState) {
     return {
-      counter: CounterStore.getState(),
+      counter: CounterStore.getState()
     };
   }
 
   render() {
-    return <CounterUI counter={this.state.counter} />;
+    return (
+      <CounterUI counter={this.state.counter} />
+    );
   }
 }
 
@@ -132,14 +134,14 @@ const container = Container.create(CounterContainer);
 ```
 
 *after*
-```js
+```jsx
 import counterReducer from './counter-reducer';
 import { createContainer } from 'monarc';
 import dispatcher from './dispatcher';
 
 function CounterContainer({ store }) {
   return (
-    <CounterUI counter={store} />;
+    <CounterUI counter={store} />
   );
 }
 
