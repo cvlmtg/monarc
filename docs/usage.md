@@ -1,8 +1,6 @@
-# Using MONARC
+# Using MONARC 🦋
 
-Like with any state management solution, we have different bits to create before we can use our application. However those bits should be already familiar if you have ever used Flux or Redux.
-
-This brief document assumes you already have used one of that frameworks or that you are at least familiar with the underlying concepts.
+Like any state management solution, we have different bits to create before we can use our application. This brief document assumes you already have used some state management frameworks or that you are at least familiar with the underlying concepts.
 
 ## Reducer
 
@@ -85,15 +83,18 @@ We can use both of them or just one of them as we wish. Each of these functions 
 
 Using this function enables undo / redo management. We will be able to save our application state changes (up to a maximum value) and undo / redo to a previous state. There are also some features which can be controlled by adding some [flags](#actions-flags) to our actions.
 
-### Options
+### Undo / redo options
 
 This function accepts the following options:
 
 - **stateKey** (optional)
 
-  We can decide to undo / redo the whole state of the application or just a part of it. In this case we can use this option to specify the name of the state key to save.
+  We can decide to undo / redo every change to any part of our application's state or just for a subset of it. With this option we can specify which part of the state will be monitored for changes. Only this key will be saved on the undo / redo stack.
 
-  **NOTE:** If you specify a key, your state object must provide `get` and `set` methods to read and write that key. This is basically what [immutable.js](https://immutable-js.github.io/immutable-js/) `Record` and `Map` classes do, but any other library with the same interface should work.
+  **NOTE**
+
+  - Even if we don't specify a key, we can decide which actions will actually save a new state on the stack. See the [next paragraph](#undo--redo-flags) for a detailed explanation.
+  - If we specify a key, the state object must provide `get` and `set` methods to read and write that key. This is basically what [immutable.js](https://immutable-js.github.io/immutable-js/) `Record` and `Map` classes do, but any other library with the same interface should work.
 
 - **maxUndo**: (optional)
 
@@ -107,13 +108,13 @@ This function accepts the following options:
 
   This is the `type` of the redo action. The default is `REDO`.
 
-## Actions flags
+## Undo / redo flags
 
-We can have a more fine grained control over the undo / redo behaviour by adding some flags to our actions.
+We can have a more fine-grained control over the undo / redo behaviour by adding some flags to our actions.
 
 - **undoSkip**
 
-  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application, we might want to save in the store the color chosen by the user, but we are not interested in making that change undoable.
+  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application, we might want to save in the store the color chosen by the user, but we don't want to activate the undo button when the user changes color.
 
   ```js
   { type: 'SET_COLOR', color: 'blue', undoSkip: true }
@@ -121,7 +122,7 @@ We can have a more fine grained control over the undo / redo behaviour by adding
 
 - **undoReset**
 
-  If any action has this attribute set to true, the undo / redo stack will be reset (i.e. emptied). Using the same vector drawing application example, we might use this when the user loads a new document or creates a new one.
+  If any action has this attribute set to true, the undo / redo stack will be reset. Using the same vector drawing application example, we might use this when the user loads a new document or creates a new one.
 
   ```js
   { type: 'NEW_DOCUMENT', undoReset: true }
@@ -135,15 +136,15 @@ We can have a more fine grained control over the undo / redo behaviour by adding
   { type: 'RESIZE_SHAPE', x, y, width, height, undoStream: true }
   ```
 
-  **NOTE:** To actually create the undo state, we must fire an action with a different `type`. This is how the store understands which was the "last action".
+  **NOTE:** To actually create the undo state, we must fire an action with `undoStream` set to false or with a different `type`. This is how the store understands which was the "last action".
 
 ## withAutoSave
 
-Using this function enables the auto save feature. Whenever the state changes, a timer will be triggered. When the timer expires the current state of the application will be saved. We can also choose to save the state *before* the change.
+Using this function enables the auto-save feature. Whenever the state changes, a timer will be triggered. When the timer expires the current state of the application will be saved. We can also choose to save the state *before* the change.
 
 Please note that the save will be immediately triggered on the [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) event too.
 
-### Options
+### Auto-save options
 
 This function accepts the following options:
 
@@ -185,21 +186,21 @@ MONARC provides some hooks to access its state:
 
 - **useStore**
 
-  returns the store state.
+  Returns the store's state.
 
 - **useDispatch**
 
-  returns the dispatcher used to dispatch actions to the store.
+  Returns the dispatcher function needed to dispatch actions to the store.
 
 - **useUndoRedo**
 
-  returns `{ canUndo, canRedo }` which tells if the undo and redo stacks are empty or not.
+  Returns `{ canUndo, canRedo }` which tells if the undo and redo stacks are empty or not.
 
 - **useAutoSave**
 
-  returns `{ isSaved }` which tells if the store state is saved or not.
+  Returns `{ isSaved }` which tells if the store's state is saved or not.
 
-For class based components you can use the [contextType](https://en.reactjs.org/docs/context.html#classcontexttype) attribute and then access it with `this.context`, or render the corresponding [consumer](https://en.reactjs.org/docs/context.html#contextconsumer).
+For class based components you can use the [contextType](https://en.reactjs.org/docs/context.html#classcontexttype) attribute, or render the corresponding context [\<Consumer />](https://en.reactjs.org/docs/context.html#contextconsumer).
 
 - **storeContext** `{ dispatch, state }`
 - **undoContex** `{ canUndo, canRedo }`

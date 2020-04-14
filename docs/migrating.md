@@ -50,7 +50,7 @@ export function increment(qty) {
 
 ## Store
 
-The store is now set up in the container, since React's hooks and context are tied to the components. This means that our existing stores can be deleted. This is assuming we have a store which simply subscribes to the dispatcher and that our reducers are neatly organized in one or more separate files. Here's an example of such a basic store:
+The store is now set up in the container, since React's hooks and context are tied to the components. This means that our existing stores can be deleted. This is assuming we have a store which simply subscribes to the dispatcher and that our reducers are neatly organized in one or more separate files. Here is an example of such a basic store:
 
 ```js
 import { ReduceStore } from 'flux/utils';
@@ -108,8 +108,9 @@ The store is now set up in the container. To mimic the Flux pattern, where the c
 
 *before*
 ```js
-import { Component } from 'react';
+import CounterStore from './counter-store';
 import { Container } from 'flux/utils';
+import { Component } from 'react';
 
 class CounterContainer extends Component {
   static getStores() {
@@ -132,8 +133,8 @@ const container = Container.create(CounterContainer);
 
 *after*
 ```js
-import { createContainer } from 'monarc';
 import counterReducer from './counter-reducer';
+import { createContainer } from 'monarc';
 import dispatcher from './dispatcher';
 
 function CounterContainer({ store }) {
