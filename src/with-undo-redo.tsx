@@ -42,6 +42,10 @@ type UndoContext = {
 
 // ---------------------------------------------------------------------
 
+function defaultGetSet(state: State): State {
+  return state;
+}
+
 function swap(current: PS, from: Array<PS>, to: Array<PS>): PS | undefined {
   const popped: PS | undefined = from.pop();
 
@@ -133,8 +137,8 @@ export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions): 
   const [ reducer, Provider ] = splitReducer(maybeReducer);
 
   const opts: UndoOptions = {
-    setState:   (state) => state,
-    getState:   (state) => state,
+    setState:   defaultGetSet,
+    getState:   defaultGetSet,
     undoAction: 'UNDO',
     redoAction: 'REDO',
     maxUndo:    50,
@@ -147,11 +151,20 @@ export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions): 
     redo: []
   };
 
+  // the user can't supply only one function for getState / setState,
+  // that's probably an error
+
+  const get  = opts.getState === defaultGetSet;
+  const set  = opts.setState === defaultGetSet;
+  const both = get === false && set === false;
+  const none = get === true && set === true;
+
   invariant(opts.maxUndo >= 0, 'invalid maxUndo value');
   invariant(opts.undoAction, 'invalid undoAction value');
   invariant(opts.redoAction, 'invalid redoAction value');
   invariant(typeof opts.getState === 'function', 'missing getState function');
   invariant(typeof opts.setState === 'function', 'missing setState function');
+  invariant(none || both, 'if you supply getState, you must supply setState too');
   invariant(reducer.name !== 'autoSave', 'cannot call withAutoSave before withUndoRedo');
 
   const UndoRedoProvider: FunctionComponent = ({ children }) => {
