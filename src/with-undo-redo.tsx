@@ -9,11 +9,24 @@ import React, {
 
 // ---------------------------------------------------------------------
 
+type RestoreFunction = (previous: State, current: State) => State;
+type RetrieveFuncion = (state: State) => PS;
+type PS = Partial<State>;
+
 type UndoOptions = {
+  setState: RestoreFunction;
+  getState: RetrieveFuncion;
   undoAction: string;
   redoAction: string;
-  stateKey: string | null;
   maxUndo: number;
+}
+
+type UserOptions = {
+  setState?: RestoreFunction;
+  getState?: RetrieveFuncion;
+  undoAction?: string;
+  redoAction?: string;
+  maxUndo?: number;
 }
 
 type InternalState = {
@@ -29,71 +42,66 @@ type UndoContext = {
 
 // ---------------------------------------------------------------------
 
-function move(state: State, key: string | null, from: Array<State>, to: Array<State>): State {
-  const popped: State | undefined = from.pop();
-  let updated: State;
-  let saved: State;
+function swap(current: PS, from: Array<PS>, to: Array<PS>): PS | undefined {
+  const popped: PS | undefined = from.pop();
 
-  if (typeof popped === 'undefined') {
-    return state;
+  if (typeof popped !== 'undefined') {
+    to.push(current);
   }
-
-  if (key) {
-    updated = state.set(key, popped);
-    saved   = state.get(key);
-  } else {
-    updated = popped;
-    saved   = state;
-  }
-  to.push(saved);
-
-  return updated;
+  return popped;
 }
 
 function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState): Reducer {
   const UNDO     = options.undoAction;
   const REDO     = options.redoAction;
-  const KEY      = options.stateKey;
+  const RESTORE  = options.setState;
+  const RETRIEVE = options.getState;
   const MAX_UNDO = options.maxUndo;
 
   return function undoRedo(state: State, action: Action): State {
-    const stream = action.undoStream === true && action.type === ctx.prev;
-    const reset  = action.undoReset === true;
-    const skip   = action.undoSkip === true;
+    const stream  = action.undoStream === true && action.type === ctx.prev;
+    const reset   = action.undoReset === true;
+    const skip    = action.undoSkip === true;
+    const current = RETRIEVE(state);
+    let retrieved: PS | undefined;
     let updated: State;
-    let u: State;
-    let s: State;
 
     switch (action.type) {
       case UNDO:
-        if (ctx.undo.length !== 0) {
-          updated  = move(state, KEY, ctx.undo, ctx.redo);
-          ctx.prev = null;
+        if (ctx.undo.length === 0) {
+          return state;
+        }
 
-          return updated;
+        retrieved = swap(current, ctx.undo, ctx.redo);
+        ctx.prev  = null;
+
+        if (typeof retrieved !== 'undefined') {
+          return RESTORE(retrieved, state);
         }
         return state;
 
       case REDO:
-        if (ctx.redo.length !== 0) {
-          updated  = move(state, KEY, ctx.redo, ctx.undo);
-          ctx.prev = null;
+        if (ctx.redo.length === 0) {
+          return state;
+        }
 
-          return updated;
+        retrieved = swap(current, ctx.redo, ctx.undo);
+        ctx.prev  = null;
+
+        if (typeof retrieved !== 'undefined') {
+          return RESTORE(retrieved, state);
         }
         return state;
 
       default:
-        updated = reduce(state, action);
+        updated   = reduce(state, action);
+        retrieved = RETRIEVE(updated);
 
-        u = KEY ? updated.get(KEY) : updated;
-        s = KEY ? state.get(KEY) : state;
-
-        if (u !== s && !skip && !reset && !stream) {
+        if (current !== retrieved && !skip && !reset && !stream) {
           if (MAX_UNDO && MAX_UNDO === ctx.undo.length) {
             ctx.undo.shift();
           }
-          ctx.undo.push(s);
+          ctx.undo.push(current);
           ctx.redo = [];
         }
 
@@ -121,13 +129,14 @@ export function useUndoRedo(): UndoContext {
   return useContext(undoContext);
 }
 
-export function withUndoRedo(maybeReducer: MaybeReducer, options = {}): ReducerProvider {
+export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions): ReducerProvider {
   const [ reducer, Provider ] = splitReducer(maybeReducer);
 
   const opts: UndoOptions = {
+    setState:   (state) => state,
+    getState:   (state) => state,
     undoAction: 'UNDO',
     redoAction: 'REDO',
-    stateKey:   null,
     maxUndo:    50,
     ...options
   };
@@ -141,6 +150,8 @@ export function withUndoRedo(maybeReducer: MaybeReducer, options = {}): ReducerP
   invariant(opts.maxUndo >= 0, 'invalid maxUndo value');
   invariant(opts.undoAction, 'invalid undoAction value');
   invariant(opts.redoAction, 'invalid redoAction value');
+  invariant(typeof opts.getState === 'function', 'missing getState function');
+  invariant(typeof opts.setState === 'function', 'missing setState function');
   invariant(reducer.name !== 'autoSave', 'cannot call withAutoSave before withUndoRedo');
 
   const UndoRedoProvider: FunctionComponent = ({ children }) => {
