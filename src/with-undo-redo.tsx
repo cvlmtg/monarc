@@ -168,9 +168,9 @@ export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions): 
   invariant(opts.maxUndo >= 0, 'invalid maxUndo value');
   invariant(opts.undoAction, 'invalid undoAction value');
   invariant(opts.redoAction, 'invalid redoAction value');
+  invariant(none || both, 'you must supply both getState and setState');
   invariant(typeof opts.getState === 'function', 'missing getState function');
   invariant(typeof opts.setState === 'function', 'missing setState function');
-  invariant(none || both, 'if you supply getState, you must supply setState too');
   invariant(reducer.name !== 'autoSave', 'cannot call withAutoSave before withUndoRedo');
 
   const UndoRedoProvider: FunctionComponent = ({ children }) => {

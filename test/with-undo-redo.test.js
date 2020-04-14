@@ -62,6 +62,32 @@ describe('the withUndoRedo constructor', () => {
     expect(invalid).toThrow();
   });
 
+  describe('checks for getState / setState options (1)', () => {
+    const getState = () => null;
+    const setState = () => null;
+
+    it('when only getState is supplied', () => {
+      const options = { getState };
+      const invalid = () => withUndoRedo(reduce, options);
+
+      expect(invalid).toThrow();
+    });
+
+    it('when only setState is supplied', () => {
+      const options = { setState };
+      const invalid = () => withUndoRedo(reduce, options);
+
+      expect(invalid).toThrow();
+    });
+
+    it('when both are supplied', () => {
+      const options = { getState, setState };
+      const invalid = () => withUndoRedo(reduce, options);
+
+      expect(invalid).not.toThrow();
+    });
+  });
+
   it('reduces a state and an action', () => {
     const { reducer } = withUndoRedo(reduce);
     const action      = { type: 'increment-count' };
@@ -89,26 +115,14 @@ describe('the withUndoRedo constructor', () => {
       expect(ctx.redo.length).toBe(0);
     });
 
-    it('partial state (1)', () => {
-      const action           = { type: 'increment-count' };
-      const options          = { maxUndo: 2, stateKey: 'data' };
-      const { reducer, ctx } = withUndoRedo(reduce, options);
-      let updated;
+    it('partial state', () => {
+      const action  = { type: 'add-message' };
+      const options = {
+        setState: (saved, current) => current.set('messages', saved),
+        getState: (current) => current.messages,
+        maxUndo:  2
+      };
 
-      updated = reducer(state, action);
-      updated = reducer(updated, action);
-      updated = reducer(updated, action);
-      updated = reducer(updated, action);
-
-      expect(state.count).toBe(1);
-      expect(updated.count).toBe(5);
-      expect(ctx.undo.length).toBe(0);
-      expect(ctx.redo.length).toBe(0);
-    });
-
-    it('partial state (2)', () => {
-      const action           = { type: 'add-message' };
-      const options          = { maxUndo: 2, stateKey: 'messages' };
       const { reducer, ctx } = withUndoRedo(reduce, options);
       let updated;
 
@@ -125,7 +139,7 @@ describe('the withUndoRedo constructor', () => {
   });
 
   describe('keeps the correct amount of redoable states', () => {
-    it('keeps the correct amount of redoable states', () => {
+    it('whole state', () => {
       const options          = { maxUndo: 2 };
       const undo             = { type: 'UNDO' };
       const action           = { type: 'increment-count' };
@@ -147,32 +161,15 @@ describe('the withUndoRedo constructor', () => {
       expect(ctx.redo.length).toBe(2);
     });
 
-    it('partial state (1)', () => {
-      const undo             = { type: 'UNDO' };
-      const action           = { type: 'increment-count' };
-      const options          = { maxUndo: 2, stateKey: 'data' };
-      const { reducer, ctx } = withUndoRedo(reduce, options);
-      let updated;
+    it('partial state', () => {
+      const action  = { type: 'add-message' };
+      const undo    = { type: 'UNDO' };
+      const options = {
+        setState: (saved, current) => current.set('messages', saved),
+        getState: (current) => current.messages,
+        maxUndo:  2
+      };
 
-      updated = reducer(state, action);
-      updated = reducer(updated, action);
-      updated = reducer(updated, action);
-      updated = reducer(updated, action);
-      updated = reducer(updated, undo);
-      updated = reducer(updated, undo);
-      updated = reducer(updated, undo);
-      updated = reducer(updated, undo);
-
-      expect(state.count).toBe(1);
-      expect(updated.count).toBe(5);
-      expect(ctx.undo.length).toBe(0);
-      expect(ctx.redo.length).toBe(0);
-    });
-
-    it('partial state (2)', () => {
-      const undo             = { type: 'UNDO' };
-      const action           = { type: 'add-message' };
-      const options          = { maxUndo: 2, stateKey: 'messages' };
       const { reducer, ctx } = withUndoRedo(reduce, options);
       let updated;
 
