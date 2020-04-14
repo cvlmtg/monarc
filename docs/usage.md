@@ -98,7 +98,7 @@ This function accepts the following options:
 
 - **maxUndo**: (optional)
 
-  The maximum number of states that will be saved on the undo / redo stack. The default is 50.
+  The maximum number of states that will be saved on the undo / redo stack. If you specify 0, there will be no limit to the undo steps available (except for user's browser memory). The default is 50.
 
 - **undoAction** (optional)
 
