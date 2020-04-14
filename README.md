@@ -33,7 +33,7 @@ This project was born as an alternative to Facebook's Flux state management solu
 * [Usage](docs/usage.md)
   * [Reducer](docs/usage.md#reducer)
   * [Undo / Redo](docs/usage.md#ithundoredo)
-  * [Auto save](docs/usage.md#withautosave)
+  * [Auto-save](docs/usage.md#withautosave)
   * [Container](docs/usage.md#container)
   * [Hooks](docs/usage.md#hooks)
 * [Migrating from Flux](docs/migrating.md)
@@ -46,9 +46,9 @@ This project was born as an alternative to Facebook's Flux state management solu
 
 ## TODO
 
-- [ ] Improve documentation
-- [ ] Add a demo application
-- [ ] More tests!
+- Improve documentation
+- Add a demo application
+- More tests!
 
 ## Licence
 

@@ -22,7 +22,7 @@ export default function reduce(state, action) {
 
 ## Container
 
-This is the component that we will render at the root of our application tree and will manage the state. It is the equivalent of Flux's `Container` or Redux's `Provider`.
+This is the component that we will render at the root of our application tree and will manage the state. It is the equivalent of Flux's `<Container />` or Redux's `<Provider />`.
 
 *container.jsx*
 ```jsx
@@ -97,7 +97,7 @@ This function accepts the following options:
 
   **NOTE:**
     - if your state or partial state is not immutable, or your partial state is made assembling different parts of the state, you should memoize the return value of this function.
-    - if you specify this option, you must also provide the *setState* function.
+    - if you specify this option, you must also provide the `setState` function.
 
 ```typescript
 function getState(state: any) => any
@@ -107,7 +107,7 @@ function getState(state: any) => any
 
   This function takes a state or partial state (whatever was returned from *getState*), the current state, and returns an updated state. If you don't specify any function, the store will replace the current state with the state taken from the stack.
 
-  **NOTE:** if you specify this option, you must also provide the *getState* function.
+  **NOTE:** if you specify this option, you must also provide the `getState` function.
 
 ```typescript
 function setState(savedState: any, currentState: any) => any
@@ -115,11 +115,11 @@ function setState(savedState: any, currentState: any) => any
 
 - **undoAction** (optional)
 
-  This is the `type` of the undo action. The default is `UNDO`.
+  This is the `type` of the undo action. The default is `'UNDO'`.
 
 - **redoAction** (optional)
 
-  This is the `type` of the redo action. The default is `REDO`.
+  This is the `type` of the redo action. The default is `'REDO'`.
 
 ## Undo / redo flags
 
@@ -143,7 +143,7 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 - **undoStream**
 
-  Let's suppose we need to fire an action when the user resizes a shape in our vector drawing application. As the user drags the mouse, we will fire more than one `RESIZE_SHAPE` action to update the shape coordinates. However we don't want to undo all these intermediate changes, just the last one. If we set the *undoStream* flag to true, the store will create a new undo state only for the last `RESIZE_SHAPE` action.
+  Let's suppose we need to fire an action when the user resizes a shape in our vector drawing application. As the user drags the mouse, we will fire more than one `RESIZE_SHAPE` action to update the shape coordinates. However we don't want to undo all these intermediate changes, just the last one. If we set the `undoStream` flag to true, the store will create a new undo state only for the last `RESIZE_SHAPE` action.
 
   ```js
   { type: 'RESIZE_SHAPE', x, y, width, height, undoStream: true }
@@ -173,11 +173,11 @@ This function accepts the following options:
 
 - **delay** (optional)
 
-  The number of milliseconds after which the *onSave* function is called. The default is 5000 ms.
+  The number of milliseconds after which the `onSave` function is called. The default is 5000 ms.
 
 - **onUpdate** (optional)
 
-  This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
+  This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto-save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
 
   ```typescript
   onUpdate: (previous: any, updated: any, action: object) => boolean;
@@ -185,7 +185,7 @@ This function accepts the following options:
 
 - **onBeforeUpdate** (optional)
 
-  This is basically the same of *onUpdate*, but if it returns true, the *previous* state is saved immediately.
+  This is basically the same of `onUpdate`, but if it returns true, the *previous* state is saved immediately.
 
   Suppose we are writing a file navigation app for our Google Drive or Dropbox account. We have the usual icons and list visualization modes. When we change folder, we want to save the visualization mode for the folder we just left, not for the new one.
 
