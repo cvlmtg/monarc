@@ -66,9 +66,9 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
     const stream  = action.undoStream === true && action.type === ctx.prev;
     const reset   = action.undoReset === true;
     const skip    = action.undoSkip === true;
-    const current = RETRIEVE(state);
     let retrieved: PS | undefined;
     let updated: State;
+    let current: PS;
 
     switch (action.type) {
       case UNDO:
@@ -76,8 +76,9 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
           return state;
         }
 
-        retrieved = swap(current, ctx.undo, ctx.redo);
         ctx.prev  = null;
+        current   = RETRIEVE(state);
+        retrieved = swap(current, ctx.undo, ctx.redo);
 
         if (typeof retrieved !== 'undefined') {
           return RESTORE(retrieved, state);
@@ -89,8 +90,9 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
           return state;
         }
 
-        retrieved = swap(current, ctx.redo, ctx.undo);
         ctx.prev  = null;
+        current   = RETRIEVE(state);
+        retrieved = swap(current, ctx.redo, ctx.undo);
 
         if (typeof retrieved !== 'undefined') {
           return RESTORE(retrieved, state);
@@ -98,15 +100,19 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
         return state;
 
       default:
-        updated   = reduce(state, action);
-        retrieved = RETRIEVE(updated);
+        updated = reduce(state, action);
 
-        if (current !== retrieved && !skip && !reset && !stream) {
-          if (MAX_UNDO && MAX_UNDO === ctx.undo.length) {
-            ctx.undo.shift();
+        if (!skip && !reset && !stream) {
+          retrieved = RETRIEVE(updated);
+          current   = RETRIEVE(state);
+
+          if (current !== retrieved) {
+            if (MAX_UNDO && MAX_UNDO === ctx.undo.length) {
+              ctx.undo.shift();
+            }
+            ctx.undo.push(current);
+            ctx.redo = [];
           }
-          ctx.undo.push(current);
-          ctx.redo = [];
         }
 
         if (reset) {
