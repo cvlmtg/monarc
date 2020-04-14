@@ -167,7 +167,7 @@ This function accepts the following options:
   This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
 
   ```js
-  onUpdate: (state: any, updated: any, action: object) => boolean;
+  onUpdate: (previous: any, updated: any, action: object) => boolean;
   ```
 
 - **onBeforeUpdate** (optional)
@@ -177,7 +177,7 @@ This function accepts the following options:
   Suppose we are writing a file navigation app for our Google Drive or Dropbox account. We have the usual icons and list visualization modes. When we change folder, we want to save the visualization mode for the folder we just left, not for the new one.
 
   ```js
-  onBeforeUpdate: (state: any, updated: any, action: object) => boolean;
+  onBeforeUpdate: (previous: any, updated: any, action: object) => boolean;
   ```
 
 ## Hooks

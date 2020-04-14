@@ -10,18 +10,19 @@ import React, {
 
 // ---------------------------------------------------------------------
 
+type UpdateFunction = (previous: State, updated: State, action: Action) => boolean;
 type SaveFunction = (state: State, callback?: () => void) => void;
 
 type SaveOptions = {
-  onBeforeUpdate?: (state: State, updated: State, action: Action) => boolean;
-  onUpdate: (state: State, updated: State, action: Action) => boolean;
+  onBeforeUpdate?: UpdateFunction;
+  onUpdate: UpdateFunction;
   onSave: SaveFunction;
   delay: number;
 }
 
 type UserOptions = {
-  onBeforeUpdate?: (state: State, updated: State, action: Action) => boolean;
-  onUpdate?: (state: State, updated: State, action: Action) => boolean;
+  onBeforeUpdate?: UpdateFunction;
+  onUpdate?: UpdateFunction;
   onSave: SaveFunction;
   delay?: number;
 }
