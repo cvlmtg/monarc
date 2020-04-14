@@ -87,18 +87,31 @@ Using this function enables undo / redo management. We will be able to save our 
 
 This function accepts the following options:
 
-- **stateKey** (optional)
-
-  We can decide to undo / redo every change to any part of our application's state or just for a subset of it. With this option we can specify which part of the state will be monitored for changes. Only this key will be saved on the undo / redo stack.
-
-  **NOTE**
-
-  - Even if we don't specify a key, we can decide which actions will actually save a new state on the stack. See the [next paragraph](#undo--redo-flags) for a detailed explanation.
-  - If we specify a key, the state object must provide `get` and `set` methods to read and write that key. This is basically what [immutable.js](https://immutable-js.github.io/immutable-js/) `Record` and `Map` classes do, but any other library with the same interface should work.
-
 - **maxUndo**: (optional)
 
   The maximum number of states that will be saved on the undo / redo stack. If you specify 0, there will be no limit to the undo steps available (except for user's browser memory). The default is 50.
+
+- **getState** (optional)
+
+  This function tells the store which part of the state to monitor for changes. Suppose we are writing a vector drawing application, we want to undo / redo changes made to the drawing. Which panel is open, the currently selected color etc. are all part of the application state, but we don't want to undo those. This function is passed a state and returns the part of the state that will be checked for changes and saved on the undo stack. If you don't specify any function, the default behaviour is to use the whole state.
+
+  **NOTE:**
+    - if your state or partial state is not immutable, or your partial state is made assembling different parts of the state, you should memoize the return value of this function.
+    - if you specify this option, you must also provide the *setState* function.
+
+```js
+function getState(state: any) => any
+```
+
+- **setState** (optional)
+
+  This function takes a state or partial state (whatever was returned from *getState*), the current state, and returns an updated state. If you don't specify any function, the store will replace the current state with the state taken from the stack.
+
+  **NOTE:** if you specify this option, you must also provide the *getState* function.
+
+```js
+function setState(savedState: any, currentState: any) => any
+```
 
 - **undoAction** (optional)
 
