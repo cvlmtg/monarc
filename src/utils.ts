@@ -44,5 +44,5 @@ export function assembleReducer(
     return { Provider, reducer, ctx };
   }
 
-  return { Provider, reducer };
+  return { reducer, Provider };
 }
