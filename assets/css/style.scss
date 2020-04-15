@@ -1,0 +1,12 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+section #title h1 {
+  text-transform: uppercase;
+
+  &:after {
+    content: ' 🦋';
+  }
+}
