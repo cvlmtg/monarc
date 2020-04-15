@@ -6,6 +6,8 @@ Like any state management solution, we have different bits to create before we c
 
 This is the equivalent of Flux's or Redux's reducer concept, i.e. a function that accepts a `state` and an `action` and returns the new state.
 
+**NOTE:** MONARC assumes that your state is immutable, i.e. every changes produces a new state. However MONARC is not tied to any implementation, so you can choose the framework you prefer, like [immutable.js](https://immutable-js.github.io/immutable-js/), [immer](https://immerjs.github.io/immer/docs/introduction), etc.
+
 *counter-reducer.js*
 ```js
 export default function reduce(state, action) {
@@ -127,7 +129,7 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 - **undoSkip**
 
-  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application, we might want to save in the store the color chosen by the user, but we don't want to activate the undo button when the user changes color.
+  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application we might have a list of the shapes drawn, each with a "selected" attribute. If the user resizes a shape and then selects another one, pressing the undo button should undo the resize, not the selection.
 
   ```js
   { type: 'SET_COLOR', color: 'blue', undoSkip: true }
