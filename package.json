@@ -1,7 +1,7 @@
 {
   "name": "monarc",
   "author": "Matteo Cavalleri",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "license": "MIT",
   "module": "dist/monarc.esm.js",
   "typings": "dist/index.d.ts",
@@ -10,7 +10,7 @@
     "dist",
     "src"
   ],
-  "homepage": "https://github.com/cvlmtg/monarc#README.md",
+  "homepage": "https://cvlmtg.github.io/monarc/",
   "repository": {
     "url": "git+https://github.com/cvlmtg/monarc.git",
     "type": "git"

@@ -6,6 +6,8 @@ Like any state management solution, we have different bits to create before we c
 
 This is the equivalent of Flux's or Redux's reducer concept, i.e. a function that accepts a `state` and an `action` and returns the new state.
 
+**NOTE:** MONARC assumes that your state is immutable, i.e. every changes produces a new state. However MONARC is not tied to any implementation, so you can choose the framework you prefer, like [immutable.js](https://immutable-js.github.io/immutable-js/), [immer](https://immerjs.github.io/immer/docs/introduction), etc.
+
 *counter-reducer.js*
 ```js
 export default function reduce(state, action) {
@@ -22,10 +24,10 @@ export default function reduce(state, action) {
 
 ## Container
 
-This is the component that we will render at the root of our application tree and will manage the state. It is the equivalent of Flux's `Container` or Redux's `Provider`.
+This is the component that we will render at the root of our application tree and will manage the state. It is the equivalent of Flux's `<Container />` or Redux's `<Provider />`.
 
 *container.jsx*
-```js
+```jsx
 import { createContainer, useDispatch, useStore } from 'monarc';
 import counterReducer from './counter-reducer';
 
@@ -55,14 +57,14 @@ export default createContainer(AppContainer, counterReducer);
 The `createContainer` function accepts a component and one or more reducers we created earlier. If your application gets big, you can split your reducers in different modules and then pass them as an array to `createContainer`. When an action is fired, all the reducers will be called in order.
 
 *container.jsx*
-```js
+```jsx
 export default createContainer(AppContainer, [ counterReducer, otherReducer ]);
 ```
 
 If we want to enable **undo** / **redo** or **auto-save**, we just need to use a couple of extra functions:
 
-*application.js*
-```js
+*container.jsx*
+```jsx
 import { createContainer, withAutoSave, withUndoRedo } from 'monarc';
 import counterReducer from './counter-reducer';
 
@@ -87,26 +89,39 @@ Using this function enables undo / redo management. We will be able to save our 
 
 This function accepts the following options:
 
-- **stateKey** (optional)
-
-  We can decide to undo / redo every change to any part of our application's state or just for a subset of it. With this option we can specify which part of the state will be monitored for changes. Only this key will be saved on the undo / redo stack.
-
-  **NOTE**
-
-  - Even if we don't specify a key, we can decide which actions will actually save a new state on the stack. See the [next paragraph](#undo--redo-flags) for a detailed explanation.
-  - If we specify a key, the state object must provide `get` and `set` methods to read and write that key. This is basically what [immutable.js](https://immutable-js.github.io/immutable-js/) `Record` and `Map` classes do, but any other library with the same interface should work.
-
 - **maxUndo**: (optional)
 
-  The maximum number of states that will be saved on the undo / redo stack. The default is 50.
+  The maximum number of states that will be saved on the undo / redo stack. If you specify 0, there will be no limit to the undo steps available (except for user's browser memory). The default is 50.
+
+- **getState** (optional)
+
+  This function tells the store which part of the state to monitor for changes. Suppose we are writing a vector drawing application, we want to undo / redo changes made to the drawing. Which panel is open, the currently selected color etc. are all part of the application state, but we don't want to undo those. This function is passed a state and returns the part of the state that will be checked for changes and saved on the undo stack. If you don't specify any function, the default behaviour is to use the whole state.
+
+  **NOTE:**
+    - if your state or partial state is not immutable, or your partial state is made assembling different parts of the state, you should memoize the return value of this function.
+    - if you specify this option, you must also provide the `setState` function.
+
+```typescript
+function getState(state: any) => any
+```
+
+- **setState** (optional)
+
+  This function takes a state or partial state (whatever was returned from *getState*), the current state, and returns an updated state. If you don't specify any function, the store will replace the current state with the state taken from the stack.
+
+  **NOTE:** if you specify this option, you must also provide the `getState` function.
+
+```typescript
+function setState(savedState: any, currentState: any) => any
+```
 
 - **undoAction** (optional)
 
-  This is the `type` of the undo action. The default is `UNDO`.
+  This is the `type` of the undo action. The default is `'UNDO'`.
 
 - **redoAction** (optional)
 
-  This is the `type` of the redo action. The default is `REDO`.
+  This is the `type` of the redo action. The default is `'REDO'`.
 
 ## Undo / redo flags
 
@@ -114,7 +129,7 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 - **undoSkip**
 
-  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application, we might want to save in the store the color chosen by the user, but we don't want to activate the undo button when the user changes color.
+  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application we might have a list of the shapes drawn, each with a "selected" attribute. If the user resizes a shape and then selects another one, pressing the undo button should undo the resize, not the selection.
 
   ```js
   { type: 'SET_COLOR', color: 'blue', undoSkip: true }
@@ -130,7 +145,7 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 - **undoStream**
 
-  Let's suppose we need to fire an action when the user resizes a shape in our vector drawing application. As the user drags the mouse, we will fire more than one `RESIZE_SHAPE` action to update the shape coordinates. However we don't want to undo all these intermediate changes, just the last one. If we set the *undoStream* flag to true, the store will create a new undo state only for the last `RESIZE_SHAPE` action.
+  Let's suppose we need to fire an action when the user resizes a shape in our vector drawing application. As the user drags the mouse, we will fire more than one `RESIZE_SHAPE` action to update the shape coordinates. However we don't want to undo all these intermediate changes, just the last one. If we set the `undoStream` flag to true, the store will create a new undo state only for the last `RESIZE_SHAPE` action.
 
   ```js
   { type: 'RESIZE_SHAPE', x, y, width, height, undoStream: true }
@@ -152,7 +167,7 @@ This function accepts the following options:
 
   This is the function that gets called when the state needs to be saved.
 
-  ```js
+  ```typescript
   function onSave(state: any, callback?: () => void) => void
   ```
 
@@ -160,24 +175,24 @@ This function accepts the following options:
 
 - **delay** (optional)
 
-  The number of milliseconds after which the *onSave* function is called. The default is 5000 ms.
+  The number of milliseconds after which the `onSave` function is called. The default is 5000 ms.
 
 - **onUpdate** (optional)
 
-  This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
+  This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto-save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
 
-  ```js
-  onUpdate: (state: any, updated: any, action: object) => boolean;
+  ```typescript
+  onUpdate: (previous: any, updated: any, action: object) => boolean;
   ```
 
 - **onBeforeUpdate** (optional)
 
-  This is basically the same of *onUpdate*, but if it returns true, the *previous* state is saved immediately.
+  This is basically the same of `onUpdate`, but if it returns true, the *previous* state is saved immediately.
 
   Suppose we are writing a file navigation app for our Google Drive or Dropbox account. We have the usual icons and list visualization modes. When we change folder, we want to save the visualization mode for the folder we just left, not for the new one.
 
-  ```js
-  onBeforeUpdate: (state: any, updated: any, action: object) => boolean;
+  ```typescript
+  onBeforeUpdate: (previous: any, updated: any, action: object) => boolean;
   ```
 
 ## Hooks

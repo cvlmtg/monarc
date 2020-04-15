@@ -8,6 +8,8 @@ It can be extended with your own plugins, and it provides built-in two advanced 
 
 It also provides some features to help migrating applications using the [Flux](https://facebook.github.io/flux/) `ReduceStore` / `Container` pattern, so you won't have to rewrite your application from scratch.
 
+It is only 4 kb minified.
+
 [![npm version](https://img.shields.io/npm/v/monarc.svg?style=flat-square)](https://www.npmjs.com/package/monarc)
 [![npm downloads](https://img.shields.io/npm/dm/monarc.svg?style=flat-square)](https://www.npmjs.com/package/monarc)
 
@@ -33,7 +35,7 @@ This project was born as an alternative to Facebook's Flux state management solu
 * [Usage](docs/usage.md)
   * [Reducer](docs/usage.md#reducer)
   * [Undo / Redo](docs/usage.md#ithundoredo)
-  * [Auto save](docs/usage.md#withautosave)
+  * [Auto-save](docs/usage.md#withautosave)
   * [Container](docs/usage.md#container)
   * [Hooks](docs/usage.md#hooks)
 * [Migrating from Flux](docs/migrating.md)
@@ -46,9 +48,9 @@ This project was born as an alternative to Facebook's Flux state management solu
 
 ## TODO
 
-- [ ] Improve documentation
-- [ ] Add a demo application
-- [ ] More tests!
+- Improve documentation
+- Add a demo application
+- More tests!
 
 ## Licence
 

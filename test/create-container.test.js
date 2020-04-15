@@ -31,9 +31,9 @@ describe('the createContainer constructor', () => {
   });
 
   it('rejects invalid reducers', () => {
-    const emptyArr   = () => createContainer('div', []);
-    const wrongObj   = () => createContainer('div', {});
-    const noArg      = () => createContainer('div');
+    const emptyArr = () => createContainer('div', []);
+    const wrongObj = () => createContainer('div', {});
+    const noArg    = () => createContainer('div');
 
     expect(emptyArr).toThrow();
     expect(wrongObj).toThrow();
