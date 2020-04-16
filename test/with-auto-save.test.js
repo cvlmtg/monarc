@@ -19,7 +19,7 @@ const State = new Record({
 
 // ---------------------------------------------------------------------
 
-describe('the withAutoSave constructor', () => {
+describe('the withAutoSave plugin', () => {
   let state;
 
   beforeEach(() => {

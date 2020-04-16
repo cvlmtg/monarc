@@ -46,7 +46,7 @@ const State = new Record({
 
 // ---------------------------------------------------------------------
 
-describe('the withUndoRedo constructor', () => {
+describe('the withUndoRedo plugin', () => {
   let state;
 
   beforeEach(() => {

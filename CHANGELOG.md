@@ -3,7 +3,7 @@
 
 ### Changed
 
-- Allow to set 0 as the delay for auto-save
+- Allow to set 0 as the delay for auto-save.
 
 ### Fixed
 

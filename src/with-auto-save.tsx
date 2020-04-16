@@ -135,8 +135,8 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
     // the little function below here is just a dirty trick to make this
     // component render when our timer expires and we have saved our data.
     // beware that we cannot call it inside the reducer, otherwise there
-    // would be two components trying to render (this component and the
-    // store container) and react doesn't like it...
+    // would be two components trying to render at the same time (this
+    // component and the store container) and react doesn't like it...
 
     useEffect(() => {
       ctx.render = (): void => setCounter(counter + 1);
