@@ -175,7 +175,7 @@ This function accepts the following options:
 
 - **delay** (optional)
 
-  The number of milliseconds after which the `onSave` function is called. The default is 5000 ms.
+  The number of milliseconds after which the `onSave` function is called. You can set it to 0, which basically means to save immediately after the render of the new state. The default is 5000 ms.
 
 - **onUpdate** (optional)
 

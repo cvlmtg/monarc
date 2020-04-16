@@ -52,14 +52,13 @@ function save(ctx: InternalState, onSave: SaveFunction): void {
 }
 
 function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
-  const BEFORE  = options.onBeforeUpdate;
-  const UPDATE  = options.onUpdate;
-  const SAVE    = options.onSave;
+  const SAVE    = save.bind(null, ctx, options.onSave);
+  const NOW     = options.onBeforeUpdate;
+  const LATER   = options.onUpdate;
   const DELAY   = options.delay;
   let installed = false;
 
   return function autoSave(state: State, action: Action): State {
-    const doSave  = save.bind(null, ctx, SAVE);
     const updated = reduce(state, action);
     let saveLater = false;
     let saveNow   = false;
@@ -68,29 +67,31 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
       window.addEventListener('beforeunload', () => {
         if (ctx.timer) {
           clearTimeout(ctx.timer);
-          doSave();
+          SAVE();
         }
       });
 
       installed = true;
     }
 
-    if (ctx.state !== null && typeof BEFORE === 'function') {
-      saveNow = BEFORE(state, updated, action);
+    if (typeof NOW === 'function') {
+      saveNow = NOW(state, updated, action);
     }
 
     if (ctx.timer === null && saveNow === false) {
-      saveLater = UPDATE(state, updated, action);
+      saveLater = LATER(state, updated, action);
     }
 
     if (saveLater === true) {
-      ctx.timer = setTimeout(doSave, DELAY);
+      ctx.timer = setTimeout(SAVE, DELAY);
     }
 
     if (saveNow === true) {
       clearTimeout(ctx.timer);
-      doSave();
+      ctx.state = state;
+      SAVE();
     }
+
     ctx.state = updated;
 
     return updated;
@@ -122,7 +123,7 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
     timer:  null
   };
 
-  invariant(opts.delay > 0, 'invalid delay value');
+  invariant(opts.delay >= 0, 'invalid delay value');
   invariant(typeof opts.onSave === 'function', 'missing onSave function');
 
   const AutoSaveProvider: FunctionComponent = ({ children }) => {

@@ -381,7 +381,8 @@ module.exports = {
     ],
     'quotes': [
       'error',
-      'single'
+      'single',
+      { 'avoidEscape': true }
     ],
     'radix': 'error',
     'require-atomic-updates': 'error',
