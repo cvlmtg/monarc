@@ -122,7 +122,7 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
     timer:  null
   };
 
-  invariant(opts.delay > 0, 'invalid delay value');
+  invariant(opts.delay >= 0, 'invalid delay value');
   invariant(typeof opts.onSave === 'function', 'missing onSave function');
 
   const AutoSaveProvider: FunctionComponent = ({ children }) => {

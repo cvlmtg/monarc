@@ -45,6 +45,13 @@ describe('the withAutoSave constructor', () => {
     expect(valid).not.toThrow();
   });
 
+  it('checks for a valid delay option', () => {
+    const options = { onSave: () => false, delay: -1 };
+    const invalid = () => withAutoSave(reduce, options);
+
+    expect(invalid).toThrow();
+  });
+
   it('enforces the onSave option', () => {
     const options = { onSave: () => false };
     const wrong   = () => withAutoSave(reduce, {});
