@@ -53,8 +53,8 @@ function save(ctx: InternalState, onSave: SaveFunction): void {
 
 function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
   const SAVE    = save.bind(null, ctx, options.onSave);
-  const BEFORE  = options.onBeforeUpdate;
-  const UPDATE  = options.onUpdate;
+  const NOW     = options.onBeforeUpdate;
+  const LATER   = options.onUpdate;
   const DELAY   = options.delay;
   let installed = false;
 
@@ -74,12 +74,12 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
       installed = true;
     }
 
-    if (typeof BEFORE === 'function') {
-      saveNow = BEFORE(state, updated, action);
+    if (typeof NOW === 'function') {
+      saveNow = NOW(state, updated, action);
     }
 
     if (ctx.timer === null && saveNow === false) {
-      saveLater = UPDATE(state, updated, action);
+      saveLater = LATER(state, updated, action);
     }
 
     if (saveLater === true) {
