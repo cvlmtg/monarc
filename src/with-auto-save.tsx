@@ -52,14 +52,13 @@ function save(ctx: InternalState, onSave: SaveFunction): void {
 }
 
 function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
+  const SAVE    = save.bind(null, ctx, options.onSave);
   const BEFORE  = options.onBeforeUpdate;
   const UPDATE  = options.onUpdate;
-  const SAVE    = options.onSave;
   const DELAY   = options.delay;
   let installed = false;
 
   return function autoSave(state: State, action: Action): State {
-    const doSave  = save.bind(null, ctx, SAVE);
     const updated = reduce(state, action);
     let saveLater = false;
     let saveNow   = false;
@@ -68,14 +67,14 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
       window.addEventListener('beforeunload', () => {
         if (ctx.timer) {
           clearTimeout(ctx.timer);
-          doSave();
+          SAVE();
         }
       });
 
       installed = true;
     }
 
-    if (ctx.state !== null && typeof BEFORE === 'function') {
+    if (typeof BEFORE === 'function') {
       saveNow = BEFORE(state, updated, action);
     }
 
@@ -84,13 +83,15 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
     }
 
     if (saveLater === true) {
-      ctx.timer = setTimeout(doSave, DELAY);
+      ctx.timer = setTimeout(SAVE, DELAY);
     }
 
     if (saveNow === true) {
       clearTimeout(ctx.timer);
-      doSave();
+      ctx.state = state;
+      SAVE();
     }
+
     ctx.state = updated;
 
     return updated;
