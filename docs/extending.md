@@ -1,6 +1,6 @@
 # Extending the store
 
-MONARC can be extend with you own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extends the core functionality.
+MONARC can be extend with you own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
 
 A plugin is built of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application.
 
@@ -10,40 +10,48 @@ Let's suppose we want to collect some data to analyze how our users uses the app
 
 *with-analytics.js*
 ```js
- 1  import { splitReducer, assembleReducer} from 'monarc';
- 2
- 3  function wrapReducer(reduce, options) {
- 4    const url = options.endpointUrl;
- 5
- 6    return function analytics(state, action) {
- 7      fetch(url, {
- 8        body:    JSON.stringify(action),
- 9        method:  'POST',
-10        headers: {
-11          'Content-Type': 'application/json'
-12        }
-13      });
-14
-15      return reduce(state, action);
-16    }
-17  }
-18
-19  export function withAnalytics(maybeReducer, options) {
-20    const [ reducer, Provider ] = splitReducer(maybeReducer);
-21
-22    const wrapped = wrapReducer(reducer, options);
-23
-24    return assembleReducer(wrapped, Provider);
-25  }
+ 1  function wrapReducer(reduce, options) {
+ 2    const url = options.endpointUrl;
+ 3
+ 4    return function analytics(state, action) {
+ 5      fetch(url, {
+ 6        body:    JSON.stringify(action),
+ 7        method:  'POST',
+ 8        headers: {
+ 9          'Content-Type': 'application/json'
+10        }
+11      });
+12
+13      return reduce(state, action);
+14    }
+15  }
 ```
 
-The `wrapReducer` function receives the "child" reducer and the options we pass when invoking our `withAnalytics` plugin. Then it returns another reducer which will do all the logging (*line 6*). Like any other reducer, it must return the new state, so we can just invoke the child reducer (*line 15*).
+The `wrapReducer` function receives a "child" reducer and the options we pass when invoking our `withAnalytics` plugin. Then it returns another reducer which will do all the logging (*line 4*). Like any other reducer, it must return the new state, so we can just invoke the child reducer (*line 13*).
 
-Now we need to write our plugin funcion. It can receive a reducer, or an array of reducers, or a reducer which has already been extended with another plugin. To handle all of these cases, we call the `splitReducer` function, which returns the real reducer function and a React component which is the (optional) context provider (*line 20*).
+Now we need to write our plugin function.
 
-After we have wrapped the reducer, we can return it. Since we haven't built any new context provider, we have to return the one we received. To do this we use the `assembleReducer` function (*line 24*).
+```js
+ 1  import { splitReducer, assembleReducer } from 'monarc';
+ 2
+ 3  function wrapReducer(reduce, options) {
+ 4    ...
+ 5  }
+ 6
+ 7  export function withAnalytics(maybeReducer, options) {
+ 8    const [ reducer, Provider ] = splitReducer(maybeReducer);
+ 9
+10    const wrapped = wrapReducer(reducer, options);
+11
+12    return assembleReducer(wrapped, Provider);
+13  }
+```
 
-Our plugin is ready to be used in our application:
+It can receive a reducer, or an array of reducers, or a reducer which has already been extended with another plugin. To handle all of these cases, we call the `splitReducer` function, which returns the real reducer function and a React component which is the (optional) context provider (*line 8*).
+
+After we have wrapped the reducer, we can return it. Since we haven't built any new context provider, we have to return the one we received. To do this we use the `assembleReducer` function (*line 12*).
+
+Our plugin is ready to be used in our application.
 
 *container.jsx*
 ```jsx
@@ -54,7 +62,7 @@ import { createContainer } from 'monarc';
 const options = { endpointUrl: 'https://example.com/etc...' };
 const reducer = withAnalytics(counterReducer, options);
 
-function AppContainer() {
+function AppContainer({ store }) {
   return (
     <div>
       <Header user={store.user} />
@@ -68,13 +76,13 @@ export default createContainer(AppContainer, reducer);
 
 ## Creating a context
 
-Suppose that now we want to display the number of actions logged. We need to create a context provider so that other components of our application can read it and display it in the right place.
+Suppose that now we want to display the number of actions logged. We need to create a context provider so that another component of our application can read it and display it in the right place.
 
-First we need to create a context with React's `createContext` (*line 8*) and then a custom hook to read from our context (*line 10*).
+First we create a context with React's `createContext` (*line 8*) and then a custom hook to read from it (*line 10*).
 
 ```jsx
  1  import React, { useMemo, useState, useContext, createContext } from 'react';
- 2  import { splitReducer, assembleReducer} from 'monarc';
+ 2  import { splitReducer, assembleReducer } from 'monarc';
  3
  4  function wrapReducer(reduce, options, ctx) {
  5    ...
