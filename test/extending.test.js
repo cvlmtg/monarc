@@ -1,5 +1,5 @@
 import { splitReducer, assembleReducer } from '../src/utils';
-import { Record, List } from 'immutable';
+import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
 

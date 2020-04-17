@@ -9,14 +9,12 @@ import React, {
 
 // ---------------------------------------------------------------------
 
+type Container = FunctionComponent<{ initialState: State }>;
+
 type Dispatch = (action: Action) => void;
 
 type Dispatcher = {
   dispatch: Dispatch;
-}
-
-type ContainerProps = {
-  initialState: State;
 }
 
 type StoreContext = {
@@ -47,10 +45,10 @@ export function createContainer(
   Component: ElementType,
   maybeReducer: MaybeReducer,
   dispatcher?: Dispatcher
-): FunctionComponent<ContainerProps> {
+): Container {
   const [ reducer, Provider ] = splitReducer(maybeReducer);
 
-  const StoreContainer: FunctionComponent<ContainerProps> = ({ initialState }) => {
+  const StoreContainer: Container = ({ initialState }) => {
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
