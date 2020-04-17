@@ -2,6 +2,7 @@ import { withUndoRedo, withAutoSave } from '../src/index';
 import { Record, List } from 'immutable';
 
 // ---------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 const reduce = (state, action) => {
   switch (action.type) {

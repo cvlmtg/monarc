@@ -2,6 +2,7 @@ import { splitReducer, assembleReducer } from '../src/utils';
 import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 function wrapReducer(reduce, options, ctx) {
   return function autoSave(state, action) {
