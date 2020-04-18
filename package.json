@@ -47,6 +47,8 @@
     "prepare": "tsdx build"
   },
   "peerDependencies": {
+    "core-js": "^3.6.5",
+    "prop-types": "^15.7.2",
     "react": ">=16.8"
   },
   "devDependencies": {
@@ -64,6 +66,7 @@
     "eslint-plugin-react-hooks": "^3.0.0",
     "husky": "^4.2.5",
     "immutable": "^4.0.0-rc.12",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "tsdx": "^0.13.2",
