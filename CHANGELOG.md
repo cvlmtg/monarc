@@ -1,5 +1,10 @@
-## [0.4.1] - 2020-04-16
+## [0.4.2] - 2020-04-18
 
+### Added
+
+- First draft for the documentation about extending the store. Still missing a working demo, but I think it was delayed enough.
+
+## [0.4.1] - 2020-04-16
 
 ### Changed
 
