@@ -2,6 +2,7 @@ import { withAutoSave, withUndoRedo } from '../src/index';
 import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 const reduce = (state, action) => {
   switch (action.type) {
@@ -19,7 +20,7 @@ const State = new Record({
 
 // ---------------------------------------------------------------------
 
-describe('the withAutoSave constructor', () => {
+describe('the withAutoSave plugin', () => {
   let state;
 
   beforeEach(() => {

@@ -82,7 +82,10 @@ module.exports = {
     'camelcase': 'error',
     'capitalized-comments': [
       'error',
-      'never'
+      'never',
+      {
+        "ignorePattern": "XXX|TODO|NOTE"
+      }
     ],
     'class-methods-use-this': 'error',
     'comma-dangle': 'error',
@@ -335,7 +338,16 @@ module.exports = {
     'no-useless-return': 'error',
     'no-var': 'error',
     'no-void': 'error',
-    'no-warning-comments': 'error',
+    'no-warning-comments': [
+      'warn',
+      {
+        'location': 'anywhere',
+        'terms': [
+          'fixme',
+          'todo'
+        ]
+      }
+    ],
     'no-whitespace-before-property': 'error',
     'nonblock-statement-body-position': 'error',
     'object-curly-newline': 'error',

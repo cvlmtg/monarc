@@ -139,7 +139,7 @@ export function useUndoRedo(): UndoContext {
   return useContext(undoContext);
 }
 
-export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions): ReducerProvider {
+export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions = {}): ReducerProvider {
   const [ reducer, Provider ] = splitReducer(maybeReducer);
 
   const opts: UndoOptions = {

@@ -1,6 +1,7 @@
 import { createContainer, withUndoRedo } from '../src/index';
 
 // ---------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 const reduce = (state, action) => {
   switch (action.type) {
