@@ -38,13 +38,13 @@ This project was born as an alternative to Facebook's Flux state management solu
   * [Auto-save](docs/usage.md#withautosave)
   * [Container](docs/usage.md#container)
   * [Hooks](docs/usage.md#hooks)
+* [Extending](docs/extending.md)
 * [Migrating from Flux](docs/migrating.md)
   * [Dispatcher](docs/migrating.md#dispatcher)
   * [Action creators](docs/migrating.md#action-creators)
   * [Store](docs/migrating.md#dispatcher)
   * [Reducers](docs/migrating.md#reducers)
   * [Container](docs/migrating.md#container)
-* [Extending](docs/extending.md)
 
 ## TODO
 
