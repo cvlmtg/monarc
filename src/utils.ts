@@ -1,17 +1,17 @@
 import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './types';
-import { FunctionComponent, ElementType, Fragment } from 'react';
+import { ElementType, Fragment } from 'react';
 import invariant from 'tiny-invariant';
 
 // ---------------------------------------------------------------------
 
 export function splitReducer(maybeReducer: MaybeReducer): [ Reducer, ElementType ] {
-  const maybe: ReducerProvider   = maybeReducer as ReducerProvider;
-  const reducers: Array<Reducer> = maybeReducer as Array<Reducer>;
+  const reducerProvider: ReducerProvider = maybeReducer as ReducerProvider;
+  const reducers: Array<Reducer>         = maybeReducer as Array<Reducer>;
 
-  if (typeof maybe.reducer !== 'undefined') {
+  if (typeof reducerProvider.reducer !== 'undefined') {
     return [
-      maybe.reducer,
-      maybe.Provider
+      reducerProvider.reducer,
+      reducerProvider.Provider
     ];
   }
 
@@ -37,11 +37,11 @@ export function splitReducer(maybeReducer: MaybeReducer): [ Reducer, ElementType
 
 export function assembleReducer(
   reducer: Reducer,
-  Provider: FunctionComponent<{}>,
+  Provider: ElementType,
   ctx?: object
 ): ReducerProvider {
   if (ctx && process.env.NODE_ENV === 'test') {
-    return { Provider, reducer, ctx };
+    return { reducer, Provider, ctx };
   }
 
   return { reducer, Provider };

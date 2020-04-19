@@ -2,9 +2,8 @@ import type { MaybeReducer, State, Action } from './types';
 import { splitReducer } from './utils';
 import PropTypes from 'prop-types';
 import React, {
-  useContext, useEffect, useReducer, useMemo,
-  createContext, Context, ElementType,
-  FunctionComponent
+  Context, createContext, useContext, useEffect, useReducer, useMemo,
+  ComponentType, FunctionComponent
 } from 'react';
 
 // ---------------------------------------------------------------------
@@ -42,7 +41,7 @@ export function useStore(): State | null {
 }
 
 export function createContainer(
-  Component: ElementType,
+  Component: ComponentType<{ store: State }>,
   maybeReducer: MaybeReducer,
   dispatcher?: Dispatcher
 ): Container {
