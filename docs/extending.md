@@ -74,7 +74,7 @@ function AppContainer({ store }) {
 export default createContainer(AppContainer, reducer);
 ```
 
-## Creating a context
+## A full fledged plugin
 
 Suppose that now we want to display the number of actions logged. We need to create a context provider so that another component of our application can read it and display it in the right place.
 

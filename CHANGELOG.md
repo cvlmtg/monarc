@@ -19,4 +19,4 @@
 ### Changed
 
 - withUndoRedo: Replaced the option `stateKey` with `getState` / `setState`. This should improve decoupling from the state implementation.
-- Misc fixes and improvements to the documentation.
+- Various fixes and improvements to the documentation.
