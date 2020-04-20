@@ -1,5 +1,7 @@
-import { withUndoRedo, withAutoSave } from '../src/index';
+import { createContainer, useUndoRedo, withUndoRedo, withAutoSave } from '../src/index';
+import { render, act } from '@testing-library/react';
 import { Record, List } from 'immutable';
+import React from 'react';
 
 // ---------------------------------------------------------------------
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -36,6 +38,20 @@ const reduce = (state, action) => {
     default:
       return state;
   }
+};
+
+const Container = () => {
+  const { canUndo, canRedo } = useUndoRedo();
+
+  const undo = String(canUndo);
+  const redo = String(canRedo);
+
+  return (
+    <div>
+      <div>UNDO {undo}</div>
+      <div>REDO {redo}</div>
+    </div>
+  );
 };
 
 const State = new Record({
@@ -366,5 +382,49 @@ describe('the withUndoRedo plugin', () => {
       expect(updated.toJS()).toEqual(plain);
       expect(result).toEqual(messages);
     });
+  });
+
+  it('creates a context provider (1)', () => {
+    const dispatcher = { dispatch: null };
+    const undoRedo   = withUndoRedo(reduce);
+    const Component  = createContainer(Container, undoRedo, dispatcher);
+
+    const { queryByText } = render(
+      <Component initialState={state} />
+    );
+
+    expect(queryByText('UNDO false')).toBeTruthy();
+    expect(queryByText('REDO false')).toBeTruthy();
+
+    act(() => {
+      dispatcher.dispatch({ type: 'increment-count' });
+    });
+
+    expect(queryByText('UNDO true')).toBeTruthy();
+    expect(queryByText('REDO false')).toBeTruthy();
+  });
+
+  it('creates a context provide (2)', () => {
+    const dispatcher = { dispatch: null };
+    const undoRedo   = withUndoRedo(reduce);
+    const Component  = createContainer(Container, undoRedo, dispatcher);
+
+    const { queryByText } = render(
+      <Component initialState={state} />
+    );
+
+    act(() => {
+      dispatcher.dispatch({ type: 'increment-count' });
+    });
+
+    expect(queryByText('UNDO true')).toBeTruthy();
+    expect(queryByText('REDO false')).toBeTruthy();
+
+    act(() => {
+      dispatcher.dispatch({ type: 'UNDO' });
+    });
+
+    expect(queryByText('UNDO false')).toBeTruthy();
+    expect(queryByText('REDO true')).toBeTruthy();
   });
 });

@@ -1,4 +1,8 @@
-import { createContainer, withUndoRedo } from '../src/index';
+import { createContainer, withUndoRedo, useDispatch } from '../src/index';
+import { fireEvent, render, act } from '@testing-library/react';
+import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
+import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -13,9 +17,36 @@ const reduce = (state, action) => {
   }
 };
 
+const Container = ({ store }) => {
+  const dispatch  = useDispatch();
+  const increment = useCallback(() => {
+    dispatch({ type: 'increment-count' });
+  }, [ dispatch ]);
+
+  return (
+    <button type="button" onClick={increment}>
+      INCREMENT: {store.count}
+    </button>
+  );
+};
+
+Container.propTypes = {
+  store: PropTypes.object.isRequired
+};
+
+const State = new Record({
+  count: 0
+});
+
 // ---------------------------------------------------------------------
 
 describe('the createContainer constructor', () => {
+  let state;
+
+  beforeEach(() => {
+    state = new State();
+  });
+
   it('accepts a single reducer or an array of reducers', () => {
     const validArg   = () => createContainer('div', [ reduce ]);
     const stillValid = () => createContainer('div', reduce);
@@ -39,5 +70,37 @@ describe('the createContainer constructor', () => {
     expect(emptyArr).toThrow();
     expect(wrongObj).toThrow();
     expect(noArg).toThrow();
+  });
+
+  it('creates a working container', () => {
+    const Component = createContainer(Container, reduce);
+    const button    = /INCREMENT/u;
+
+    const { queryByText, getByText } = render(
+      <Component initialState={state} />
+    );
+
+    expect(queryByText('INCREMENT: 0')).toBeTruthy();
+
+    fireEvent.click(getByText(button));
+
+    expect(queryByText('INCREMENT: 1')).toBeTruthy();
+  });
+
+  it('create a flux dispatcher', () => {
+    const dispatcher = { dispatch: null };
+    const Component  = createContainer(Container, reduce, dispatcher);
+
+    const { queryByText } = render(
+      <Component initialState={state} />
+    );
+
+    expect(queryByText('INCREMENT: 0')).toBeTruthy();
+
+    act(() => {
+      dispatcher.dispatch({ type: 'increment-count' });
+    });
+
+    expect(queryByText('INCREMENT: 1')).toBeTruthy();
   });
 });
