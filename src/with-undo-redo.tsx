@@ -1,4 +1,4 @@
-import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './types';
+import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './typings';
 import { splitReducer, assembleReducer } from './utils';
 import invariant from 'tiny-invariant';
 import PropTypes from 'prop-types';

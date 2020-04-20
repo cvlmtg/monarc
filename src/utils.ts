@@ -1,4 +1,4 @@
-import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './types';
+import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './typings';
 import { ElementType, Fragment } from 'react';
 import invariant from 'tiny-invariant';
 

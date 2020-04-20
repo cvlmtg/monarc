@@ -1,4 +1,4 @@
-import type { MaybeReducer, State, Action } from './types';
+import type { MaybeReducer, State, Action } from './typings';
 import { splitReducer } from './utils';
 import PropTypes from 'prop-types';
 import React, {
