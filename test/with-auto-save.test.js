@@ -48,7 +48,7 @@ describe('the withAutoSave plugin', () => {
     expect(noArg).toThrow();
   });
 
-  it('extends a "super reducer"', () => {
+  it('extends a wrapped reducer', () => {
     const undo    = withUndoRedo(reduce);
     const options = { onSave: () => false };
     const valid   = () => withAutoSave(undo, options);

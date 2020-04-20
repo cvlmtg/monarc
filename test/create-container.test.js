@@ -24,7 +24,7 @@ describe('the createContainer constructor', () => {
     expect(validArg).not.toThrow();
   });
 
-  it('accepts a "super reduce"', () => {
+  it('accepts a wrapped reducer', () => {
     const undo     = withUndoRedo(reduce);
     const validArg = () => createContainer('div', undo);
 
