@@ -151,3 +151,7 @@ CounterContainer.propTypes = {
 
 const container = createContainer(CounterContainer, counterReducer, dispatcher);
 ```
+
+---
+
+[Back to the index](../README.md)

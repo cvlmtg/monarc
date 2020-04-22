@@ -1,3 +1,13 @@
+## [0.4.3] - 2020-04-22
+
+### Changed
+
+- Just tried to refine the module a bit.
+
+### Added
+
+- A couple more unit tests.
+
 ## [0.4.2] - 2020-04-18
 
 ### Added
@@ -19,4 +29,4 @@
 ### Changed
 
 - withUndoRedo: Replaced the option `stateKey` with `getState` / `setState`. This should improve decoupling from the state implementation.
-- Misc fixes and improvements to the documentation.
+- Various fixes and improvements to the documentation.

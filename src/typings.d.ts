@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { ElementType } from 'react';
 
 // --------------------------------------------------
 
@@ -7,7 +7,7 @@ type Reducer = (state: State, action: Action) => State;
 type State = any;
 
 type ReducerProvider = {
-  Provider: FunctionComponent<{}>;
+  Provider: ElementType;
   reducer: Reducer;
   ctx?: object;
 }
