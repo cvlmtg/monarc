@@ -207,3 +207,7 @@ export function withAnalytics(maybeReducer, options) {
   ...
 }
 ```
+
+---
+
+[Back to the index](../README.md)

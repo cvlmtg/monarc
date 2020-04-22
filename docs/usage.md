@@ -220,3 +220,7 @@ For class based components you can use the [contextType](https://en.reactjs.org/
 - **storeContext** `{ dispatch, state }`
 - **undoContex** `{ canUndo, canRedo }`
 - **saveContext** `{ isSaved }`
+
+---
+
+[Back to the index](../README.md)
