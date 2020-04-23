@@ -197,7 +197,7 @@ This function accepts the following options:
 
 ## Hooks
 
-MONARC provides some hooks to access its state:
+MONARC provides some hooks to access its state on every functional component of your application:
 
 - **useStore**
 
