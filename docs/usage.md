@@ -83,7 +83,7 @@ We can use both of them or just one of them as we wish. Each of these functions 
 
 ## withUndoRedo
 
-Using this function enables undo / redo management. We will be able to save our application state changes (up to a maximum value) and undo / redo to a previous state. There are also some features which can be controlled by adding some [flags](#actions-flags) to our actions.
+Using this function enables undo / redo management. We will be able to save our application state changes (up to a maximum value) and undo / redo to a previous state. There are also some features which can be controlled by adding some [flags](#undo--redo-flags) to our actions.
 
 ### Undo / redo options
 
