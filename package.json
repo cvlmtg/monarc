@@ -1,5 +1,6 @@
 {
   "name": "monarc",
+  "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
   "version": "0.4.4",
   "license": "MIT",
@@ -27,6 +28,7 @@
     "react",
     "context",
     "store",
+    "hooks",
     "autosave",
     "undo",
     "redo",
@@ -35,8 +37,7 @@
     "functional",
     "immutable",
     "flux",
-    "redux",
-    "hooks"
+    "redux"
   ],
   "scripts": {
     "clean": "rm -rf dist",
