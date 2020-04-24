@@ -1,3 +1,13 @@
+## [0.4.4] - 2020-04-24
+
+### Changed
+
+- Pass `children` to the wrapped Component.
+
+### Fixed
+
+- Fixed a link in the documentation.
+
 ## [0.4.3] - 2020-04-22
 
 ### Changed

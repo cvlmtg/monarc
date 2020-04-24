@@ -8,7 +8,10 @@ import React, {
 
 // ---------------------------------------------------------------------
 
-type Container = FunctionComponent<{ initialState: State }>;
+type Container = FunctionComponent<{
+  initialState: State;
+  children?: any;
+}>;
 
 type Dispatch = (action: Action) => void;
 
@@ -47,7 +50,7 @@ export function createContainer(
 ): Container {
   const [ reducer, Provider ] = splitReducer(maybeReducer);
 
-  const StoreContainer: Container = ({ initialState }) => {
+  const StoreContainer: Container = ({ initialState, children }) => {
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
@@ -63,7 +66,9 @@ export function createContainer(
         <Provider>
           <storeContext.Consumer>
             {(current): JSX.Element => (
-              <Component store={current.state} />
+              <Component store={current.state}>
+                {children}
+              </Component>
             )}
           </storeContext.Consumer>
         </Provider>
@@ -72,7 +77,8 @@ export function createContainer(
   };
 
   StoreContainer.propTypes = {
-    initialState: PropTypes.object.isRequired
+    initialState: PropTypes.object.isRequired,
+    children:     PropTypes.any
   };
 
   return StoreContainer;
