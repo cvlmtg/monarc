@@ -102,7 +102,7 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
       default:
         updated = reduce(state, action);
 
-        if (!skip && !reset && !stream) {
+        if (skip === false && reset === false && stream === false) {
           next    = RETRIEVE(updated);
           current = RETRIEVE(state);
 
@@ -115,7 +115,7 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
           }
         }
 
-        if (reset) {
+        if (reset === true) {
           ctx.undo = [];
           ctx.redo = [];
         }
