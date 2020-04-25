@@ -1,7 +1,8 @@
 {
   "name": "monarc",
+  "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
-  "version": "0.4.4",
+  "version": "1.0.0",
   "license": "MIT",
   "module": "dist/monarc.esm.js",
   "typings": "dist/index.d.ts",
@@ -27,6 +28,7 @@
     "react",
     "context",
     "store",
+    "hooks",
     "autosave",
     "undo",
     "redo",
@@ -35,8 +37,7 @@
     "functional",
     "immutable",
     "flux",
-    "redux",
-    "hooks"
+    "redux"
   ],
   "scripts": {
     "clean": "rm -rf dist",

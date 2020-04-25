@@ -24,7 +24,7 @@ export default function reduce(state, action) {
 
 ## Container
 
-This is the component that we will render at the root of our application tree and will manage the state. It is the equivalent of Flux's `<Container />` or Redux's `<Provider />`.
+This is the component that we will render at the root of our application tree and that will manage the application's state. It is the equivalent of Flux's `<Container />` or Redux's `<Provider />`.
 
 *container.jsx*
 ```jsx
@@ -54,14 +54,14 @@ function AppContainer() {
 export default createContainer(AppContainer, counterReducer);
 ```
 
-The `createContainer` function accepts a component and one or more reducers we created earlier. If your application gets big, you can split your reducers in different modules and then pass them as an array to `createContainer`. When an action is fired, all the reducers will be called in order.
+The `createContainer` function accepts a component and one or more reducers we created earlier. If your application gets big, you can split your reducers in different files and then pass them as an array to `createContainer`. When an action is fired, all the reducers will be called in order.
 
 *container.jsx*
 ```jsx
 export default createContainer(AppContainer, [ counterReducer, otherReducer ]);
 ```
 
-If we want to enable **undo** / **redo** or **auto-save**, we just need to use a couple of extra functions:
+If we want to enable **undo** / **redo** or **auto-save**, we just need to use the included plugins:
 
 *container.jsx*
 ```jsx
@@ -83,7 +83,7 @@ We can use both of them or just one of them as we wish. Each of these functions 
 
 ## withUndoRedo
 
-Using this function enables undo / redo management. We will be able to save our application state changes (up to a maximum value) and undo / redo to a previous state. There are also some features which can be controlled by adding some [flags](#undo--redo-flags) to our actions.
+Using this function enables undo / redo management. We will be able to save our application's state changes (up to a maximum value) and undo / redo to a previous state. There are also some behaviours which can be controlled by adding some [flags](#undo--redo-flags) to our actions.
 
 ### Undo / redo options
 
@@ -91,7 +91,7 @@ This function accepts the following options:
 
 - **maxUndo**: (optional)
 
-  The maximum number of states that will be saved on the undo / redo stack. If you specify 0, there will be no limit to the undo steps available (except for user's browser memory). The default is 50.
+  The maximum number of states that will be saved on the undo / redo stack. If you specify 0, there will be no limit to the undo steps available (except for the user's browser memory). The default is 50.
 
 - **getState** (optional)
 
@@ -129,7 +129,7 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 - **undoSkip**
 
-  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application we might have a list of the shapes drawn, each with a "selected" attribute. If the user resizes a shape and then selects another one, pressing the undo button should undo the resize, not the selection.
+  If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application we might have a list of the shapes drawn, each with a "selected" attribute. If the user resizes a shape and then selects another one, we might decide that pressing the undo button should undo the resize, not the selection.
 
   ```js
   { type: 'SET_COLOR', color: 'blue', undoSkip: true }

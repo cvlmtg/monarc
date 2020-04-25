@@ -63,10 +63,10 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
   const MAX_UNDO = options.maxUndo;
 
   return function undoRedo(state: State, action: Action): State {
-    const stream  = action.undoStream === true && action.type === ctx.prev;
-    const reset   = action.undoReset === true;
-    const skip    = action.undoSkip === true;
-    let retrieved: PS | undefined;
+    const stream = action.undoStream === true && action.type === ctx.prev;
+    const reset  = action.undoReset === true;
+    const skip   = action.undoSkip === true;
+    let next: PS | undefined;
     let updated: State;
     let current: PS;
 
@@ -76,12 +76,12 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
           return state;
         }
 
-        ctx.prev  = null;
-        current   = RETRIEVE(state);
-        retrieved = swap(current, ctx.undo, ctx.redo);
+        ctx.prev = null;
+        current  = RETRIEVE(state);
+        next     = swap(current, ctx.undo, ctx.redo);
 
-        if (typeof retrieved !== 'undefined') {
-          return RESTORE(retrieved, state);
+        if (typeof next !== 'undefined') {
+          return RESTORE(next, state);
         }
         return state;
 
@@ -90,23 +90,23 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
           return state;
         }
 
-        ctx.prev  = null;
-        current   = RETRIEVE(state);
-        retrieved = swap(current, ctx.redo, ctx.undo);
+        ctx.prev = null;
+        current  = RETRIEVE(state);
+        next     = swap(current, ctx.redo, ctx.undo);
 
-        if (typeof retrieved !== 'undefined') {
-          return RESTORE(retrieved, state);
+        if (typeof next !== 'undefined') {
+          return RESTORE(next, state);
         }
         return state;
 
       default:
         updated = reduce(state, action);
 
-        if (!skip && !reset && !stream) {
-          retrieved = RETRIEVE(updated);
-          current   = RETRIEVE(state);
+        if (skip === false && reset === false && stream === false) {
+          next    = RETRIEVE(updated);
+          current = RETRIEVE(state);
 
-          if (current !== retrieved) {
+          if (current !== next) {
             if (MAX_UNDO && MAX_UNDO === ctx.undo.length) {
               ctx.undo.shift();
             }
@@ -115,7 +115,7 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
           }
         }
 
-        if (reset) {
+        if (reset === true) {
           ctx.undo = [];
           ctx.redo = [];
         }
