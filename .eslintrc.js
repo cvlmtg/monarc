@@ -44,7 +44,10 @@ module.exports = {
   'rules': {
     '@typescript-eslint/no-explicit-any': 'off',
     'accessor-pairs': 'error',
-    'array-bracket-newline': 'error',
+    'array-bracket-newline': [
+      'error',
+      'consistent'
+    ],
     'array-bracket-spacing': [
       'error',
       'always'
@@ -100,11 +103,11 @@ module.exports = {
       'error',
       'last'
     ],
-    'complexity': 'error',
+    'complexity': 'off',
     'computed-property-spacing': 'error',
     'consistent-return': 'error',
     'consistent-this': 'error',
-    'curly': 'error',
+    'curly': [ 'error', 'all' ],
     'default-case': 'error',
     'default-param-last': 'error',
     'dot-location': [
@@ -153,14 +156,14 @@ module.exports = {
       {
         'SwitchCase': 1,
         'MemberExpression': 1,
-        "FunctionDeclaration": {
-          "parameters": "first"
+        'FunctionDeclaration': {
+          'parameters': 'first'
         },
-        "FunctionExpression": {
-          "parameters": "first"
+        'FunctionExpression': {
+          'parameters': 'first'
         },
-        "ArrayExpression": 1,
-        "ObjectExpression": 1
+        'ArrayExpression': 1,
+        'ObjectExpression': 1
       }
     ],
     'indent-legacy': 'off',
@@ -194,9 +197,14 @@ module.exports = {
     'max-len': [
       'error',
       {
-        'code': 200,
+        'code': 120,
         'tabWidth': 2,
+        'comments': 80,
+        'ignoreUrls': true,
         'ignoreComments': false,
+        'ignoreStrings': true,
+        'ignoreTemplateLiterals': true,
+        'ignoreRegExpLiterals': true,
         'ignoreTrailingComments': false
       }
     ],
@@ -225,7 +233,12 @@ module.exports = {
     'no-alert': 'error',
     'no-array-constructor': 'error',
     'no-await-in-loop': 'error',
-    'no-bitwise': 'error',
+    'no-bitwise': [
+      'error',
+      {
+        'int32Hint': true
+      }
+    ],
     'no-buffer-constructor': 'error',
     'no-caller': 'error',
     'no-catch-shadow': 'error',
@@ -247,11 +260,22 @@ module.exports = {
       'error',
       'all',
       {
-        'ignoreJSX': 'all'
+        'conditionalAssign': false,
+        'returnAssign': true,
+        'nestedBinaryExpressions': false,
+        'ignoreJSX': 'all',
+        'enforceForArrowConditionals': false,
+        'enforceForSequenceExpressions': false,
+        'enforceForNewInMemberExpressions': false
       }
     ],
     'no-floating-decimal': 'error',
-    'no-implicit-coercion': 'error',
+    'no-implicit-coercion': [
+      'error',
+      {
+        'boolean': false
+      }
+    ],
     'no-implicit-globals': 'error',
     'no-implied-eval': 'error',
     'no-import-assign': 'error',
@@ -329,6 +353,12 @@ module.exports = {
     'no-unmodified-loop-condition': 'error',
     'no-unneeded-ternary': 'error',
     'no-unused-expressions': 'error',
+    'no-unused-vars': [
+      'error',
+      {
+        'ignoreRestSiblings': true
+      }
+    ],
     'no-use-before-define': 'error',
     'no-useless-call': 'error',
     'no-useless-computed-key': 'error',
@@ -359,8 +389,8 @@ module.exports = {
     'one-var': [
       'error',
       {
-        uninitialized: 'never',
-        initialized: 'never'
+        'uninitialized': 'never',
+        'initialized': 'never'
       }
     ],
     'one-var-declaration-per-line': [
@@ -368,7 +398,10 @@ module.exports = {
       'initializations'
     ],
     'operator-assignment': 'error',
-    'operator-linebreak': 'error',
+    'operator-linebreak': [
+      'error',
+      'before'
+    ],
     'padded-blocks': [
       'error',
       'never'
@@ -382,8 +415,8 @@ module.exports = {
     'prefer-numeric-literals': 'error',
     'prefer-object-spread': 'error',
     'prefer-promise-reject-errors': 'error',
-    'prefer-reflect': 'error',
-    'prefer-regex-literals': 'error',
+    'prefer-reflect': 'off',
+    'prefer-regex-literals': 'off',
     'prefer-rest-params': 'error',
     'prefer-spread': 'error',
     'prefer-template': 'error',
@@ -397,6 +430,51 @@ module.exports = {
       { 'avoidEscape': true }
     ],
     'radix': 'error',
+    'react/jsx-props-no-spreading': 'error',
+    'react/no-danger': 'error',
+    'react/no-unused-prop-types': 'error',
+    'react/no-unused-state': 'error',
+    'react/prop-types': [
+      'error',
+      {
+        'ignore': [
+          'children'
+        ]
+      }
+    ],
+    'react/sort-comp': [
+      'warn',
+      {
+        order: [
+          'static-methods',
+          'lifecycle',
+          '/^on[A-Z].+$/',
+          'everything-else',
+          'rendering'
+        ],
+        groups: {
+          lifecycle: [
+            'displayName',
+            'propTypes',
+            'defaultProps',
+            'contextTypes',
+            'childContextTypes',
+            'getChildContext',
+            'statics',
+            'getDerivedStateFromProps',
+            'getSnapshotBeforeUpdate',
+            'state',
+            'constructor',
+            '/^(shouldC|c)omponent.+$/'
+          ],
+          rendering: [
+            '/^render[A-Z].+$/',
+            'getNode',
+            'render'
+          ]
+        }
+      }
+    ],
     'require-atomic-updates': 'error',
     'require-await': 'error',
     'require-jsdoc': 'off',
