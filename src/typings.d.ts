@@ -13,8 +13,8 @@ type ReducerProvider = {
 }
 
 interface Action {
+  readonly type: string;
   undoStream?: boolean;
   undoReset?: boolean;
   undoSkip?: boolean;
-  type: string;
 }
