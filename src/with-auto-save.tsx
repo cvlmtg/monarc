@@ -56,23 +56,20 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
   const NOW     = options.onBeforeUpdate;
   const LATER   = options.onUpdate;
   const DELAY   = options.delay;
-  let installed = false;
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+      if (ctx.timer) {
+        clearTimeout(ctx.timer);
+        SAVE();
+      }
+    });
+  }
 
   return function autoSave(state: State, action: Action): State {
     const updated = reduce(state, action);
     let saveLater = false;
     let saveNow   = false;
-
-    if (installed === false && typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
-        if (ctx.timer) {
-          clearTimeout(ctx.timer);
-          SAVE();
-        }
-      });
-
-      installed = true;
-    }
 
     if (typeof NOW === 'function') {
       saveNow = NOW(state, updated, action);
