@@ -42,13 +42,15 @@ type SaveContext = {
 function save(ctx: InternalState, onSave: SaveFunction): void {
   ctx.timer = null;
 
-  if (onSave.length === 2) {
-    onSave(ctx.state, ctx.render);
+  if (onSave.length === 1) {
+    onSave(ctx.state);
+    ctx.render();
     return;
   }
 
-  onSave(ctx.state);
-  ctx.render();
+  onSave(ctx.state, () => {
+    ctx.render();
+  });
 }
 
 function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
@@ -56,23 +58,20 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
   const NOW     = options.onBeforeUpdate;
   const LATER   = options.onUpdate;
   const DELAY   = options.delay;
-  let installed = false;
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+      if (ctx.timer) {
+        clearTimeout(ctx.timer);
+        SAVE();
+      }
+    });
+  }
 
   return function autoSave(state: State, action: Action): State {
     const updated = reduce(state, action);
     let saveLater = false;
     let saveNow   = false;
-
-    if (installed === false && typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
-        if (ctx.timer) {
-          clearTimeout(ctx.timer);
-          SAVE();
-        }
-      });
-
-      installed = true;
-    }
 
     if (typeof NOW === 'function') {
       saveNow = NOW(state, updated, action);
@@ -118,7 +117,7 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
   };
 
   const ctx: InternalState = {
-    render: () => undefined,
+    render: (): void => undefined,
     state:  null,
     timer:  null
   };
@@ -140,6 +139,10 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
 
     useEffect(() => {
       ctx.render = (): void => setCounter(counter + 1);
+
+      return (): void => {
+        ctx.render = (): void => undefined;
+      };
     }, [ counter ]);
 
     return (
