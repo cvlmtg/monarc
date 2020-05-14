@@ -9,6 +9,7 @@ A plugin is built of two parts. The first one wraps the reducer, the second one 
 Let's suppose we want to collect some data to analyze how our users uses the application. We could log certain events depending on the actions being fired or its parameters. In this case we don't need to add a new context for the application, so we'll build just the wrapper for the reducer.
 
 *with-analytics.js*
+
 ```js
  1  function wrapReducer(reduce, options) {
  2    const url = options.endpointUrl;
@@ -54,6 +55,7 @@ After we have wrapped the reducer, we can return it. Since we haven't built any 
 Our plugin is ready to be used in our application.
 
 *container.jsx*
+
 ```jsx
 import counterReducer from './counter-reducer';
 import withAnalytics from './with-analytics';
@@ -62,7 +64,7 @@ import { createContainer } from 'monarc';
 const options = { endpointUrl: 'https://example.com/etc...' };
 const reducer = withAnalytics(counterReducer, options);
 
-function AppContainer({ store }) {
+function CounterContainer({ store }) {
   return (
     <div>
       <Header user={store.user} />
@@ -71,7 +73,7 @@ function AppContainer({ store }) {
   );
 }
 
-export default createContainer(AppContainer, reducer);
+export default createContainer(CounterContainer, reducer);
 ```
 
 ## A full fledged plugin

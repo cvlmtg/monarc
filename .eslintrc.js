@@ -1,3 +1,5 @@
+/* eslint-disable quote-props, key-spacing */
+
 module.exports = {
   'root': true,
   'parser': '@typescript-eslint/parser',
@@ -81,16 +83,16 @@ module.exports = {
         'allowSingleLine': true
       }
     ],
-    'callback-return': 'error',
-    'camelcase': 'error',
-    'capitalized-comments': [
+    'callback-return': 'off',
+    'camelcase': [
       'error',
-      'never',
       {
-        "ignorePattern": "XXX|TODO|NOTE"
+        'properties': 'never',
+        'ignoreDestructuring': false,
+        'ignoreImports': false
       }
     ],
-    'class-methods-use-this': 'error',
+    'capitalized-comments': 'off',
     'comma-dangle': 'error',
     'comma-spacing': [
       'error',
@@ -149,6 +151,19 @@ module.exports = {
       { json: 'always' }
     ],
     'import/first': 'error',
+    'import/namespace': [
+      'error',
+      {
+        'allowComputed': true
+      }
+    ],
+    'import/no-unresolved': [
+      'error',
+      {
+        commonjs: true,
+        caseSensitive: true
+      }
+    ],
     'import/order': 0,
     'indent': [
       'error',
@@ -323,9 +338,9 @@ module.exports = {
     'no-octal-escape': 'error',
     'no-param-reassign': 'error',
     'no-path-concat': 'error',
-    'no-plusplus': 'error',
+    'no-plusplus': 'off',
     'no-process-env': 'off',
-    'no-process-exit': 'error',
+    'no-process-exit': 'off',
     'no-proto': 'error',
     'no-restricted-globals': 'error',
     'no-restricted-imports': 'error',
