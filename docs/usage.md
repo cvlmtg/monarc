@@ -9,6 +9,7 @@ This is the equivalent of Flux's or Redux's reducer concept, i.e. a function tha
 **NOTE:** MONARC assumes that your state is immutable, i.e. every changes produces a new state. However MONARC is not tied to any implementation, so you can choose the framework you prefer, like [immutable.js](https://immutable-js.github.io/immutable-js/), [immer](https://immerjs.github.io/immer/docs/introduction), etc.
 
 *counter-reducer.js*
+
 ```js
 export default function reduce(state, action) {
   switch (action.type) {
@@ -27,11 +28,12 @@ export default function reduce(state, action) {
 This is the component that we will render at the root of our application tree and that will manage the application's state. It is the equivalent of Flux's `<Container />` or Redux's `<Provider />`.
 
 *container.jsx*
+
 ```jsx
 import { createContainer, useDispatch, useStore } from 'monarc';
 import counterReducer from './counter-reducer';
 
-function AppContainer() {
+function CounterContainer() {
   const dispatch = useDispatch();
   const store    = useStore();
 
@@ -51,35 +53,54 @@ function AppContainer() {
   );
 }
 
-export default createContainer(AppContainer, counterReducer);
+export default createContainer(CounterContainer, counterReducer);
 ```
+
+After we've create our container, we just need to render it with the initial state of our app:
+
+*index.jsx*
+
+```jsx
+import CounterContainer from './containers/counter-container.jsx';
+import ReactDOM from 'react-dom';
+import React from 'react';
+
+const node = document.getElementById('application');
+const app  = (
+  <CounterContainer initialState={0} />
+);
+
+ReactDOM.render(app, node);
+```
+
+#### Reducers
 
 The `createContainer` function accepts a component and one or more reducers we created earlier. If your application gets big, you can split your reducers in different files and then pass them as an array to `createContainer`. When an action is fired, all the reducers will be called in order.
 
 *container.jsx*
+
 ```jsx
-export default createContainer(AppContainer, [ counterReducer, otherReducer ]);
+export default createContainer(CounterContainer, [ counterReducer, otherReducer ]);
 ```
 
 If we want to enable **undo** / **redo** or **auto-save**, we just need to use the included plugins:
 
 *container.jsx*
+
 ```jsx
 import { createContainer, withAutoSave, withUndoRedo } from 'monarc';
 import counterReducer from './counter-reducer';
 
-function AppContainer() {
+function CounterContainer() {
   ...
 }
 
 const reducer = withAutoSave(withUndoRedo(counterReducer), options);
 
-export default createContainer(AppContainer, reducer);
+export default createContainer(CounterContainer, reducer);
 ```
 
 We can use both of them or just one of them as we wish. Each of these functions accept some options as the second parameter.
-
-**NOTE:** The function `withAutoSave` should always be the most external one.
 
 ## withUndoRedo
 
@@ -157,7 +178,9 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 Using this function enables the auto-save feature. Whenever the state changes, a timer will be triggered. When the timer expires the current state of the application will be saved. We can also choose to save the state *before* the change.
 
-Please note that the save will be immediately triggered on the [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) event too.
+The save will be immediately triggered on the [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) event too.
+
+**NOTE:** The function `withAutoSave` should always be the most external one.
 
 ### Auto-save options
 

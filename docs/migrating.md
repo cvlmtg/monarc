@@ -9,12 +9,14 @@ These instructions should help you migrating from a Flux application using the [
 First we need to replace Flux's dispatcher with a new one. Usually the dispatcher is put in a separate module, which is then imported and used by the various action creators and to setup the store. All we need to do is to replace it with a fake one.
 
 *before*
+
 ```js
 import { Dispatcher } from 'flux';
 export default new Dispatcher();
 ```
 
 *after*
+
 ```js
 export default { dispatch: null };
 ```
@@ -31,6 +33,7 @@ The `dispatch` attribute will later be replaced by the real dispatch function.
 We should not need to make any changes to our existing action creators.
 
 *before*
+
 ```js
 import dispatcher from './dispatcher';
 
@@ -40,6 +43,7 @@ export function increment(qty) {
 ```
 
 *after*
+
 ```js
 import dispatcher from './dispatcher';
 
@@ -75,13 +79,14 @@ export default new CounterStore(dispatcher);
 We should not need to make any changes to our existing reducers.
 
 *before*
+
 ```js
 export default function reduce(state, action) {
   switch (action.type) {
     case 'INCREMENT':
-      return state + 1
+      return state + action.qty;
     case 'DECREMENT':
-      return state - 1
+      return state - action.qty;
     default:
       return state
   }
@@ -89,13 +94,14 @@ export default function reduce(state, action) {
 ```
 
 *after*
+
 ```js
 export default function reduce(state, action) {
   switch (action.type) {
     case 'INCREMENT':
-      return state + 1
+      return state + action.qty;
     case 'DECREMENT':
-      return state - 1
+      return state - action.qty;
     default:
       return state
   }
@@ -107,6 +113,7 @@ export default function reduce(state, action) {
 The store is now set up in the container. To mimic the Flux pattern, where the container updates its state when the store changes and then passes it down to its children, our new container will be rendered with a `store` prop which contains the store current state. Please note that in the `createContainer` function call we now have to pass the dispatcher as well.
 
 *before*
+
 ```jsx
 import CounterStore from './counter-store';
 import { Container } from 'flux/utils';
@@ -134,6 +141,7 @@ const container = Container.create(CounterContainer);
 ```
 
 *after*
+
 ```jsx
 import counterReducer from './counter-reducer';
 import { createContainer } from 'monarc';
@@ -150,6 +158,21 @@ CounterContainer.propTypes = {
 };
 
 const container = createContainer(CounterContainer, counterReducer, dispatcher);
+```
+
+After we've create our container, we just need to render it with the initial state of our app:
+
+```jsx
+import CounterContainer from './containers/counter-container.jsx';
+import ReactDOM from 'react-dom';
+import React from 'react';
+
+const node = document.getElementById('application');
+const app  = (
+  <CounterContainer initialState={0} />
+);
+
+ReactDOM.render(app, node);
 ```
 
 ---
