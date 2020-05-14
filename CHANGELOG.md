@@ -1,4 +1,10 @@
-## [1.0.2] - 2020-05-11
+## [1.0.3] - 2020-05-14
+
+### Fixed
+
+- Fix reducer setup which was run too late under certain circumstances.
+
+## [1.0.2] - 2020-05-14
 
 ### Fixed
 

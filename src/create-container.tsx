@@ -2,8 +2,9 @@ import type { MaybeReducer, State, Action } from './typings';
 import { splitReducer } from './utils';
 import PropTypes from 'prop-types';
 import React, {
-  Context, createContext, useContext, useEffect, useReducer, useMemo,
-  ComponentType, FunctionComponent
+  useContext, useLayoutEffect, useReducer, useMemo,
+  ComponentType, FunctionComponent,
+  Context, createContext
 } from 'react';
 
 // ---------------------------------------------------------------------
@@ -55,7 +56,7 @@ export function createContainer(
 
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (dispatcher) {
         dispatcher.dispatch = dispatch;
       }
