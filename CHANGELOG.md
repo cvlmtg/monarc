@@ -1,3 +1,9 @@
+## [1.0.2] - 2020-05-11
+
+### Fixed
+
+- Fixed documentation on how to use the container.
+
 ## [1.0.1] - 2020-05-11
 
 ### Fixed
