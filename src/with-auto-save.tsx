@@ -134,6 +134,21 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
     const isSaved = ctx.timer === null;
     const value   = useMemo(() => ({ isSaved }), [ isSaved ]);
 
+    // save our state on unmount if there's a timer active
+
+    useEffect(() => {
+      const onSave = options.onSave;
+
+      return (): void => {
+        ctx.render = (): void => undefined;
+
+        if (ctx.timer) {
+          clearTimeout(ctx.timer);
+          save(ctx, onSave, true);
+        }
+      };
+    }, []);
+
     // the little function below here is just a dirty trick to make this
     // component render when our timer expires and we have saved our data.
     // beware that we cannot call it inside the reducer, otherwise there
@@ -142,10 +157,6 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
 
     useEffect(() => {
       ctx.render = (): void => setCounter(counter + 1);
-
-      return (): void => {
-        ctx.render = (): void => undefined;
-      };
     }, [ counter ]);
 
     return (
