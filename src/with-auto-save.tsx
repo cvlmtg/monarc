@@ -39,18 +39,21 @@ type SaveContext = {
 
 // ---------------------------------------------------------------------
 
-function save(ctx: InternalState, onSave: SaveFunction): void {
+function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean): void {
   ctx.timer = null;
 
-  if (onSave.length === 1) {
-    onSave(ctx.state);
-    ctx.render();
+  if (onSave.length === 2) {
+    onSave(ctx.state, () => {
+      ctx.render();
+    });
     return;
   }
 
-  onSave(ctx.state, () => {
+  onSave(ctx.state);
+
+  if (onBeforeUpdate !== true) {
     ctx.render();
-  });
+  }
 }
 
 function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
@@ -63,7 +66,7 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
     window.addEventListener('beforeunload', () => {
       if (ctx.timer) {
         clearTimeout(ctx.timer);
-        SAVE();
+        SAVE(true);
       }
     });
   }
@@ -88,7 +91,7 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
     if (saveNow === true) {
       clearTimeout(ctx.timer);
       ctx.state = state;
-      SAVE();
+      SAVE(true);
     }
 
     ctx.state = updated;
@@ -131,6 +134,21 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
     const isSaved = ctx.timer === null;
     const value   = useMemo(() => ({ isSaved }), [ isSaved ]);
 
+    // save our state on unmount if there's a timer active
+
+    useEffect(() => {
+      const onSave = options.onSave;
+
+      return (): void => {
+        ctx.render = (): void => undefined;
+
+        if (ctx.timer) {
+          clearTimeout(ctx.timer);
+          save(ctx, onSave, true);
+        }
+      };
+    }, []);
+
     // the little function below here is just a dirty trick to make this
     // component render when our timer expires and we have saved our data.
     // beware that we cannot call it inside the reducer, otherwise there
@@ -139,10 +157,6 @@ export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): 
 
     useEffect(() => {
       ctx.render = (): void => setCounter(counter + 1);
-
-      return (): void => {
-        ctx.render = (): void => undefined;
-      };
     }, [ counter ]);
 
     return (
