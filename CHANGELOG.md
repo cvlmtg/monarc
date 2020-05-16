@@ -1,3 +1,13 @@
+## [1.0.4] - 2020-05-16
+
+### Added
+
+- Save immediately on unmount if there's an auto-save timer active.
+
+### Fixed
+
+- Don't trigger a render during onBeforeUpdate if the save function is not asynchronous.
+
 ## [1.0.3] - 2020-05-14
 
 ### Fixed
