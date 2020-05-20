@@ -4,7 +4,7 @@ import { Record } from 'immutable';
 // ---------------------------------------------------------------------
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-function wrapReducer(reduce, options, ctx) {
+function wrapReducer(reduce, ctx) {
   return (state, action) => {
     const updated = reduce(state, action);
 

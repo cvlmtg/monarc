@@ -44,7 +44,7 @@ function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean
   }
 }
 
-function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
+function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions): Reducer {
   invariant(typeof options.onSave === 'function', 'missing onSave function');
   invariant(options.delay >= 0, 'invalid delay value');
 

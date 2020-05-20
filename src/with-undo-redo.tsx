@@ -43,7 +43,7 @@ function swap(current: PS, from: Array<PS>, to: Array<PS>): PS | undefined {
   return popped;
 }
 
-function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState): Reducer {
+function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions): Reducer {
   const get  = options.getState === defaultGetSet;
   const set  = options.setState === defaultGetSet;
   const both = get === false && set === false;

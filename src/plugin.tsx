@@ -79,7 +79,7 @@ function full(params: FullParams): Plugin {
 
     const ctx     = clone(params.ctx);
     const opts    = { ...defaults, ...options };
-    const wrapped = wrapReducer(reducer, opts, ctx);
+    const wrapped = wrapReducer(reducer, ctx, opts);
 
     const PluginProvider: FunctionComponent = ({ children }) => {
       const value = useSetup(ctx, opts);
@@ -118,7 +118,7 @@ function simple(params: SimpleParams): Plugin {
 
     const ctx     = clone(params.ctx);
     const opts    = { ...defaults, ...options };
-    const wrapped = wrapReducer(reducer, opts, ctx);
+    const wrapped = wrapReducer(reducer, ctx, opts);
 
     if (process.env.NODE_ENV === 'test') {
       return { reducer: wrapped, Provider, ctx };
