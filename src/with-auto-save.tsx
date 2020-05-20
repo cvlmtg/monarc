@@ -93,9 +93,7 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
 
 function useSetup(ctx: InternalState, options: SaveOptions): SaveContext {
   const [ counter, setCounter ] = useState(0);
-
   const isSaved = ctx.timer === null;
-  const value   = useMemo(() => ({ isSaved }), [ isSaved ]);
 
   // the little function below here is just a dirty trick to make this
   // component render when our timer expires and we have saved our data.
@@ -122,7 +120,7 @@ function useSetup(ctx: InternalState, options: SaveOptions): SaveContext {
     };
   }, []); // eslint-disable-line
 
-  return value;
+  return useMemo(() => ({ isSaved }), [ isSaved ]);
 }
 
 const defaults = {

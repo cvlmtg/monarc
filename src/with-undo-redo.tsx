@@ -135,9 +135,8 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
 function useSetup(ctx: InternalState): UndoContext {
   const canUndo = ctx.undo.length !== 0;
   const canRedo = ctx.redo.length !== 0;
-  const value   = useMemo(() => ({ canUndo, canRedo }), [ canUndo, canRedo ]);
 
-  return value;
+  return useMemo(() => ({ canUndo, canRedo }), [ canUndo, canRedo ]);
 }
 
 const defaults = {
