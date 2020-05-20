@@ -91,7 +91,7 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
   };
 }
 
-function useSetup(ctx: InternalState, options: SaveOptions): SaveContext {
+function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
   const [ counter, setCounter ] = useState(0);
   const isSaved = ctx.timer === null;
 
@@ -136,15 +136,15 @@ const ctx: InternalState = {
 
 // ---------------------------------------------------------------------
 
-const { withPlugin, context, useHook } = createPlugin({
+const { withPlugin, usePlugin, context } = createPlugin({
   wrapReducer,
-  useSetup,
+  useValue,
   defaults,
   ctx
 });
 
 export {
   withPlugin as withAutoSave,
-  context as saveContext,
-  useHook as useAutoSave
+  usePlugin as useAutoSave,
+  context as saveContext
 };

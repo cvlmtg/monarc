@@ -11,19 +11,19 @@ import React, {
 type Plugin = {
   withPlugin: (maybeReducer: MaybeReducer, options: object) => ReducerProvider;
   context?: Context<any>;
-  useHook?: Function;
+  usePlugin?: Function;
 }
 
 type PluginParams = {
   wrapReducer: Function;
-  useSetup?: Function;
+  useValue?: Function;
   defaults?: object;
   ctx?: object;
 }
 
 type FullParams = {
   wrapReducer: Function;
-  useSetup: Function;
+  useValue: Function;
   defaults?: object;
   ctx?: object;
 }
@@ -72,7 +72,7 @@ export function splitReducer(maybeReducer: MaybeReducer): [ Reducer, ElementType
 function full(params: FullParams): Plugin {
   const wrapReducer = params.wrapReducer;
   const defaults    = params.defaults;
-  const useSetup    = params.useSetup;
+  const useValue    = params.useValue;
 
   function withPlugin(maybeReducer: MaybeReducer, options: object): ReducerProvider {
     const [ reducer, Provider ] = splitReducer(maybeReducer);
@@ -82,7 +82,7 @@ function full(params: FullParams): Plugin {
     const wrapped = wrapReducer(reducer, ctx, opts);
 
     const PluginProvider: FunctionComponent = ({ children }) => {
-      const value = useSetup(ctx, opts);
+      const value = useValue(ctx, opts);
 
       return (
         <context.Provider value={value}>
@@ -102,11 +102,11 @@ function full(params: FullParams): Plugin {
 
   const context: Context<any> = createContext(null);
 
-  function useHook(): Context<any> {
+  function usePlugin(): Context<any> {
     return useContext(context);
   }
 
-  return { withPlugin, useHook, context };
+  return { withPlugin, usePlugin, context };
 }
 
 function simple(params: SimpleParams): Plugin {
@@ -131,7 +131,7 @@ function simple(params: SimpleParams): Plugin {
 }
 
 export function createPlugin(params: PluginParams): Plugin {
-  if (params.useSetup === undefined) {
+  if (params.useValue === undefined) {
     return simple(params as SimpleParams);
   }
 

@@ -132,7 +132,7 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
   };
 }
 
-function useSetup(ctx: InternalState): UndoContext {
+function useValue(ctx: InternalState): UndoContext {
   const canUndo = ctx.undo.length !== 0;
   const canRedo = ctx.redo.length !== 0;
 
@@ -155,15 +155,15 @@ const ctx: InternalState = {
 
 // ---------------------------------------------------------------------
 
-const { withPlugin, context, useHook } = createPlugin({
+const { withPlugin, usePlugin, context } = createPlugin({
   wrapReducer,
-  useSetup,
+  useValue,
   defaults,
   ctx
 });
 
 export {
   withPlugin as withUndoRedo,
-  context as undoContext,
-  useHook as useUndoRedo
+  usePlugin as useUndoRedo,
+  context as undoContext
 };
