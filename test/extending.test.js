@@ -1,11 +1,11 @@
-import { splitReducer, assembleReducer } from '../src/utils';
+import { createPlugin } from '../src/index';
 import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 function wrapReducer(reduce, options, ctx) {
-  return function autoSave(state, action) {
+  return (state, action) => {
     const updated = reduce(state, action);
 
     ctx.actions.push(action.type);
@@ -14,14 +14,10 @@ function wrapReducer(reduce, options, ctx) {
   };
 }
 
-function withLogging(maybeReducer, options) {
-  const [ reducer, Provider ] = splitReducer(maybeReducer);
-
-  const ctx     = { actions: [] };
-  const wrapped = wrapReducer(reducer, options, ctx);
-
-  return assembleReducer(wrapped, Provider, ctx);
-}
+const { withPlugin: withLogging } = createPlugin({
+  ctx: { actions: [] },
+  wrapReducer
+});
 
 const reduce = (state, action) => {
   switch (action.type) {
