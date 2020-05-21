@@ -39,7 +39,7 @@ Now we need to write our plugin function.
  4    ...
  5  }
  6
- 7  const [ withAnalytics ] = createPlugin({ wrapReducer });
+ 7  const [ withAnalytics ] = createPlugin(wrapReducer);
  8
  9 export { withAnalytics };
 ```
@@ -105,7 +105,7 @@ We can now increment the `actionsLogged` value in our reducer.
 20
 21  ...
 22
-23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin({ wrapReducer, useValue });
+23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin(wrapReducer, useValue);
 28
 29  export { withAnalytics, useAnalytics, analyticsContext };
 ```
