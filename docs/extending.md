@@ -78,44 +78,39 @@ Suppose that now we want to display the number of actions logged. We need to cre
  1  function useValue(ctx) {
  4    return ctx.actionsLogged;
  5  }
- 6
- 7  const ctx = {
- 8    actionsLogged;: 0
- 9  };
 ```
 
-We create an object (*line 7*) that will get passed to our hook and to our reducer (*line 1*). Now we need a way to increment our counter every time we process an action.
+We can now increment the `actionsLogged` value in our reducer.
 
 ```jsx
  1  function wrapReducer(reduce, ctx, options) {
  2    const url = options.endpointUrl;
  3
- 4    ctx.actionsLogged; += 1;
+ 4    ctx.actionsLogged = 0;
  5
  6    return function analytics(state, action) {
- 7      fetch(url, {
- 8        body:    JSON.stringify(action),
- 9        method:  'POST',
-10        headers: {
-11          'Content-Type': 'application/json'
-12        }
-13      });
-14
-15      return reduce(state, action);
-16    }
-17  }
-18
-19  ...
+ 7      ctx.actionsLogged; += 1;
+ 8
+ 9      fetch(url, {
+10        body:    JSON.stringify(action),
+11        method:  'POST',
+12        headers: {
+13          'Content-Type': 'application/json'
+14        }
+15      });
+16
+17      return reduce(state, action);
+18    }
+19  }
 20
-21  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin({
-22    wrapReducer,
-23    useValue,
-24    ctx
-25  });
-26
-27  export { withAnalytics, useAnalytics, analyticsContext };
+21  ...
+22
+23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin({ wrapReducer, useValue });
+28
+29  export { withAnalytics, useAnalytics, analyticsContext };
 ```
-In our reducer we will increment our counter (*line 4*). Now we only need to export the hook to read the value and the context needed by class based components (*line 27*).
+
+We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook to read the value and the context needed by class based components (*line 23*).
 
 ---
 
