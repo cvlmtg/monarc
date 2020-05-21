@@ -1,5 +1,5 @@
 import type { Reducer, State, Action } from './typings';
-import { createPlugin } from './plugin';
+import { createPlugin } from './create-plugin';
 import invariant from 'tiny-invariant';
 import { useMemo } from 'react';
 
