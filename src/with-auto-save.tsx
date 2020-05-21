@@ -50,6 +50,12 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
   invariant(typeof options.onSave === 'function', 'missing onSave function');
   invariant(options.delay >= 0, 'invalid delay value');
 
+  // initialize our state
+
+  ctx.render = (): void => undefined;
+  ctx.state  = null;
+  ctx.timer  = null;
+
   const SAVE  = save.bind(null, ctx, options.onSave);
   const NOW   = options.onBeforeUpdate;
   const LATER = options.onUpdate;
@@ -126,11 +132,6 @@ const params = {
   defaults: {
     onUpdate: (): boolean => true,
     delay:    5 * 1000
-  },
-  ctx: {
-    render: (): void => undefined,
-    state:  null,
-    timer:  null
   },
   wrapReducer,
   useValue

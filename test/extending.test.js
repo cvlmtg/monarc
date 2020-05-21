@@ -5,6 +5,8 @@ import { Record } from 'immutable';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 function wrapReducer(reduce, ctx) {
+  ctx.actions = [];
+
   return (state, action) => {
     const updated = reduce(state, action);
 
@@ -14,8 +16,7 @@ function wrapReducer(reduce, ctx) {
   };
 }
 
-const params          = { wrapReducer, ctx: { actions: [] } };
-const [ withLogging ] = createPlugin(params);
+const [ withLogging ] = createPlugin({ wrapReducer });
 
 const reduce = (state, action) => {
   switch (action.type) {

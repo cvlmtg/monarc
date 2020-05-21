@@ -1,5 +1,4 @@
 import invariant from 'tiny-invariant';
-import clone from './clone';
 import React, {
   FunctionComponent, ElementType, Fragment,
   Context, createContext, useContext
@@ -21,20 +20,17 @@ type PluginParams = {
   wrapReducer: Function;
   useValue?: Function;
   defaults?: object;
-  ctx?: object;
 }
 
 type FullParams = {
   wrapReducer: Function;
   useValue: Function;
   defaults?: object;
-  ctx?: object;
 }
 
 type SimpleParams = {
   wrapReducer: Function;
   defaults?: object;
-  ctx?: object;
 }
 
 // ---------------------------------------------------------------------
@@ -80,7 +76,7 @@ function full(params: FullParams): StorePlugin {
   function withPlugin(maybeReducer: MaybeReducer, options: object): ReducerProvider {
     const [ reducer, Provider ] = splitReducer(maybeReducer);
 
-    const ctx     = clone(params.ctx);
+    const ctx     = {};
     const opts    = { ...defaults, ...options };
     const wrapped = wrapReducer(reducer, ctx, opts);
 
@@ -119,7 +115,7 @@ function simple(params: SimpleParams): StorePlugin {
   function withPlugin(maybeReducer: MaybeReducer, options: object): ReducerProvider {
     const [ reducer, Provider ] = splitReducer(maybeReducer);
 
-    const ctx     = clone(params.ctx);
+    const ctx     = {};
     const opts    = { ...defaults, ...options };
     const wrapped = wrapReducer(reducer, ctx, opts);
 

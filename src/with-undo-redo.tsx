@@ -60,6 +60,12 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
   invariant(options.redoAction, 'invalid redoAction value');
   invariant(options.maxUndo >= 0, 'invalid maxUndo value');
 
+  // initialize our state
+
+  ctx.prev = null;
+  ctx.undo = [];
+  ctx.redo = [];
+
   const UNDO     = options.undoAction;
   const REDO     = options.redoAction;
   const RESTORE  = options.setState;
@@ -146,11 +152,6 @@ const params = {
     undoAction: 'UNDO',
     redoAction: 'REDO',
     maxUndo:    50
-  },
-  ctx: {
-    prev: null,
-    undo: [],
-    redo: []
   },
   wrapReducer,
   useValue
