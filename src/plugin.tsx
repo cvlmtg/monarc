@@ -4,34 +4,17 @@ import React, {
   Context, createContext, useContext
 } from 'react';
 import type {
-  ReducerExtender, MaybeReducer, ReducerProvider, Reducer,
+  WrapReducer, MaybeReducer, ReducerProvider, Reducer,
   State, Action
 } from './typings';
 
 // ---------------------------------------------------------------------
 
 type StorePlugin = [
-  ReducerExtender,
+  (maybeReducer: MaybeReducer, options: object) => ReducerProvider,
   Function | undefined,
   Context<any> | undefined
 ];
-
-type PluginParams = {
-  wrapReducer: Function;
-  useValue?: Function;
-  defaults?: object;
-}
-
-type FullParams = {
-  wrapReducer: Function;
-  useValue: Function;
-  defaults?: object;
-}
-
-type SimpleParams = {
-  wrapReducer: Function;
-  defaults?: object;
-}
 
 // ---------------------------------------------------------------------
 
@@ -68,10 +51,8 @@ export function splitReducer(maybeReducer: MaybeReducer): [ Reducer, ElementType
 
 // ---------------------------------------------------------------------
 
-function full(params: FullParams): StorePlugin {
-  const wrapReducer = params.wrapReducer;
-  const defaults    = params.defaults;
-  const useValue    = params.useValue;
+function full(wrapReducer: WrapReducer, useValue: Function, defaults?: object): StorePlugin {
+  const context: Context<any> = createContext(null);
 
   function withPlugin(maybeReducer: MaybeReducer, options: object): ReducerProvider {
     const [ reducer, Provider ] = splitReducer(maybeReducer);
@@ -99,8 +80,6 @@ function full(params: FullParams): StorePlugin {
     return { reducer: wrapped, Provider: PluginProvider };
   }
 
-  const context: Context<any> = createContext(null);
-
   function usePlugin(): Context<any> {
     return useContext(context);
   }
@@ -108,10 +87,7 @@ function full(params: FullParams): StorePlugin {
   return [ withPlugin, usePlugin, context ];
 }
 
-function simple(params: SimpleParams): StorePlugin {
-  const wrapReducer = params.wrapReducer;
-  const defaults    = params.defaults;
-
+function simple(wrapReducer: WrapReducer, defaults?: object): StorePlugin {
   function withPlugin(maybeReducer: MaybeReducer, options: object): ReducerProvider {
     const [ reducer, Provider ] = splitReducer(maybeReducer);
 
@@ -129,10 +105,10 @@ function simple(params: SimpleParams): StorePlugin {
   return [ withPlugin, undefined, undefined ];
 }
 
-export function createPlugin(params: PluginParams): StorePlugin {
-  if (params.useValue === undefined) {
-    return simple(params as SimpleParams);
+export function createPlugin(wrapReducer: WrapReducer, useValue?: Function, defaults?: object): StorePlugin {
+  if (typeof useValue === 'function') {
+    return full(wrapReducer, useValue, defaults);
   }
 
-  return full(params as FullParams);
+  return simple(wrapReducer, useValue);
 }

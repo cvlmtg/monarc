@@ -16,7 +16,7 @@ function wrapReducer(reduce, ctx) {
   };
 }
 
-const [ withLogging ] = createPlugin({ wrapReducer });
+const [ withLogging ] = createPlugin(wrapReducer);
 
 const reduce = (state, action) => {
   switch (action.type) {

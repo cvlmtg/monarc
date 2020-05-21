@@ -145,20 +145,16 @@ function useValue(ctx: InternalState): UndoContext {
   return useMemo(() => ({ canUndo, canRedo }), [ canUndo, canRedo ]);
 }
 
-const params = {
-  defaults: {
-    setState:   defaultGetSet,
-    getState:   defaultGetSet,
-    undoAction: 'UNDO',
-    redoAction: 'REDO',
-    maxUndo:    50
-  },
-  wrapReducer,
-  useValue
+const defaults = {
+  setState:   defaultGetSet,
+  getState:   defaultGetSet,
+  undoAction: 'UNDO',
+  redoAction: 'REDO',
+  maxUndo:    50
 };
 
 // ---------------------------------------------------------------------
 
-const [ withUndoRedo, useUndoRedo, undoContext ] = createPlugin(params);
+const [ withUndoRedo, useUndoRedo, undoContext ] = createPlugin(wrapReducer, useValue, defaults);
 
 export { withUndoRedo, useUndoRedo, undoContext };

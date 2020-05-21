@@ -2,7 +2,7 @@ import type { ElementType } from 'react';
 
 // --------------------------------------------------
 
-type ReducerExtender = (maybeReducer: MaybeReducer, options: object) => ReducerProvider;
+type WrapReducer = (reduce: Reducer, ctx: any, options: any) => Reducer;
 type MaybeReducer = ReducerProvider | Array<Reducer> | Reducer;
 type Reducer = (state: State, action: Action) => State;
 type State = any;

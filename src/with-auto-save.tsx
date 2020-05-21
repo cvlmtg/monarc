@@ -128,17 +128,13 @@ function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
   return useMemo(() => ({ isSaved }), [ isSaved ]);
 }
 
-const params = {
-  defaults: {
-    onUpdate: (): boolean => true,
-    delay:    5 * 1000
-  },
-  wrapReducer,
-  useValue
+const defaults = {
+  onUpdate: (): boolean => true,
+  delay:    5 * 1000
 };
 
 // ---------------------------------------------------------------------
 
-const [ withAutoSave, useAutoSave, saveContext ] = createPlugin(params);
+const [ withAutoSave, useAutoSave, saveContext ] = createPlugin(wrapReducer, useValue, defaults);
 
 export { withAutoSave, useAutoSave, saveContext };
