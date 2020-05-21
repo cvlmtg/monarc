@@ -107,7 +107,7 @@ We create an object (*line 7*) that will get passed to our hook and to our reduc
 18
 19  ...
 20
-21  const { withPlugin, context, usePlugin } = createPlugin({
+21  const { withPlugin, usePlugin, context } = createPlugin({
 22    wrapReducer,
 23    useValue,
 24    ctx
@@ -115,8 +115,8 @@ We create an object (*line 7*) that will get passed to our hook and to our reduc
 26
 27  export {
 28    withPlugin as withAnalytics,
-29    context as analyticsContext,
-30    usePlugin as useAnalytics
+30    usePlugin as useAnalytics,
+29    context as analyticsContext
 31  };
 ```
 In our reducer we will increment our counter (*line 4*). Now we only need to export the hook to read the value (which we will rename to `useAnalytics`, *line 30*) and the context to be used by class based components (*line 29*).
