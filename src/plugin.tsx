@@ -1,18 +1,21 @@
-import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './typings';
 import invariant from 'tiny-invariant';
 import clone from './clone';
 import React, {
   FunctionComponent, ElementType, Fragment,
   Context, createContext, useContext
 } from 'react';
+import type {
+  ReducerExtender, MaybeReducer, ReducerProvider, Reducer,
+  State, Action
+} from './typings';
 
 // ---------------------------------------------------------------------
 
-type Plugin = {
-  withPlugin: (maybeReducer: MaybeReducer, options: object) => ReducerProvider;
-  context?: Context<any>;
-  usePlugin?: Function;
-}
+type StorePlugin = [
+  ReducerExtender,
+  Function | undefined,
+  Context<any> | undefined
+];
 
 type PluginParams = {
   wrapReducer: Function;
@@ -69,7 +72,7 @@ export function splitReducer(maybeReducer: MaybeReducer): [ Reducer, ElementType
 
 // ---------------------------------------------------------------------
 
-function full(params: FullParams): Plugin {
+function full(params: FullParams): StorePlugin {
   const wrapReducer = params.wrapReducer;
   const defaults    = params.defaults;
   const useValue    = params.useValue;
@@ -106,10 +109,10 @@ function full(params: FullParams): Plugin {
     return useContext(context);
   }
 
-  return { withPlugin, usePlugin, context };
+  return [ withPlugin, usePlugin, context ];
 }
 
-function simple(params: SimpleParams): Plugin {
+function simple(params: SimpleParams): StorePlugin {
   const wrapReducer = params.wrapReducer;
   const defaults    = params.defaults;
 
@@ -127,10 +130,10 @@ function simple(params: SimpleParams): Plugin {
     return { reducer: wrapped, Provider };
   }
 
-  return { withPlugin };
+  return [ withPlugin, undefined, undefined ];
 }
 
-export function createPlugin(params: PluginParams): Plugin {
+export function createPlugin(params: PluginParams): StorePlugin {
   if (params.useValue === undefined) {
     return simple(params as SimpleParams);
   }
