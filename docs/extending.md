@@ -39,9 +39,9 @@ Now we need to write our plugin function.
  4    ...
  5  }
  6
- 7  const { withPlugin } = createPlugin({ wrapReducer });
+ 7  const [ withAnalytics ] = createPlugin({ wrapReducer });
  8
- 9 export { withPlugin as withAnalytics };
+ 9 export { withAnalytics };
 ```
 
 We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*) and then we are ready to export our plugin with the name we like (*line 9*). Our plugin is ready to be used in our application.
@@ -107,19 +107,15 @@ We create an object (*line 7*) that will get passed to our hook and to our reduc
 18
 19  ...
 20
-21  const { withPlugin, usePlugin, context } = createPlugin({
+21  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin({
 22    wrapReducer,
 23    useValue,
 24    ctx
 25  });
 26
-27  export {
-28    withPlugin as withAnalytics,
-30    usePlugin as useAnalytics,
-29    context as analyticsContext
-31  };
+27  export { withAnalytics, useAnalytics, analyticsContext };
 ```
-In our reducer we will increment our counter (*line 4*). Now we only need to export the hook to read the value (which we will rename to `useAnalytics`, *line 30*) and the context to be used by class based components (*line 29*).
+In our reducer we will increment our counter (*line 4*). Now we only need to export the hook to read the value and the context needed by class based components (*line 27*).
 
 ---
 
