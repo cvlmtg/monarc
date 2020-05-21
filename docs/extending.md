@@ -112,6 +112,26 @@ We can now increment the `actionsLogged` value in our reducer.
 
 We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook to read the value and the context needed by class based components (*line 23*).
 
+## Options
+
+Our plugin will accept an optional `options` object as its second argument. If we need to provide some default values, we can pass them to the `createPlugin` function as the last argument, e.g.
+
+```js
+
+const defaults = {
+  endpointUrl: 'https://example.com/',
+  timeout: 5000
+};
+
+const [ ... ] = createPlugin(wrapReducer, useValue, defaults);
+```
+
+Or, if we want to create just a reducer:
+
+```js
+const [ ... ] = createPlugin(wrapReducer, defaults);
+```
+
 ---
 
 [Back to the index](../README.md)
