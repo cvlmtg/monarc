@@ -28,6 +28,8 @@ type SaveContext = {
 // ---------------------------------------------------------------------
 
 function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean): void {
+  clearTimeout(ctx.timer);
+
   ctx.timer = null;
 
   if (onSave.length === 2) {
@@ -56,7 +58,6 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
       if (ctx.timer) {
-        clearTimeout(ctx.timer);
         SAVE(true);
       }
     });
@@ -80,7 +81,6 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
     }
 
     if (saveNow === true) {
-      clearTimeout(ctx.timer);
       ctx.state = state;
       SAVE(true);
     }
@@ -114,7 +114,6 @@ function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
       ctx.render = (): void => undefined;
 
       if (ctx.timer) {
-        clearTimeout(ctx.timer);
         save(ctx, onSave, true);
       }
     };
