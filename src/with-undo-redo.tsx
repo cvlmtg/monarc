@@ -44,10 +44,15 @@ function swap(current: PS, from: Array<PS>, to: Array<PS>): PS | undefined {
 }
 
 function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions): Reducer {
-  const get  = options.getState === defaultGetSet;
-  const set  = options.setState === defaultGetSet;
-  const both = get === false && set === false;
-  const none = get === true && set === true;
+  const get      = options.getState === defaultGetSet;
+  const set      = options.setState === defaultGetSet;
+  const both     = get === false && set === false;
+  const none     = get === true && set === true;
+  const UNDO     = options.undoAction;
+  const REDO     = options.redoAction;
+  const RESTORE  = options.setState;
+  const RETRIEVE = options.getState;
+  const MAX_UNDO = options.maxUndo;
 
   // the user can't supply only one function for getState / setState,
   // that's probably an error
@@ -65,12 +70,6 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
   ctx.prev = null;
   ctx.undo = [];
   ctx.redo = [];
-
-  const UNDO     = options.undoAction;
-  const REDO     = options.redoAction;
-  const RESTORE  = options.setState;
-  const RETRIEVE = options.getState;
-  const MAX_UNDO = options.maxUndo;
 
   return function undoRedo(state: State, action: Action): State {
     const stream = action.undoStream === true && action.type === ctx.prev;

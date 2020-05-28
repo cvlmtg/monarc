@@ -47,6 +47,11 @@ function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean
 }
 
 function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions): Reducer {
+  const SAVE  = save.bind(null, ctx, options.onSave);
+  const NOW   = options.onBeforeUpdate;
+  const LATER = options.onUpdate;
+  const DELAY = options.delay;
+
   invariant(typeof options.onSave === 'function', 'missing onSave function');
   invariant(options.delay >= 0, 'invalid delay value');
 
@@ -55,11 +60,6 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
   ctx.render = (): void => undefined;
   ctx.state  = null;
   ctx.timer  = null;
-
-  const SAVE  = save.bind(null, ctx, options.onSave);
-  const NOW   = options.onBeforeUpdate;
-  const LATER = options.onUpdate;
-  const DELAY = options.delay;
 
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
