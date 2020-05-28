@@ -1,8 +1,8 @@
 # Extending the store
 
-MONARC can be extend with you own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
+MONARC can be extend with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
 
-A plugin is built of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application.
+A plugin consists of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application.
 
 ## A simple example
 
@@ -41,7 +41,7 @@ Now we need to write our plugin function.
  6
  7  const [ withAnalytics ] = createPlugin(wrapReducer);
  8
- 9 export { withAnalytics };
+ 9  export { withAnalytics };
 ```
 
 We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*) and then we are ready to export our plugin with the name we like (*line 9*). Our plugin is ready to be used in our application.
@@ -76,8 +76,8 @@ Suppose that now we want to display the number of actions logged. We need to cre
 
 ```jsx
  1  function useValue(ctx) {
- 4    return ctx.actionsLogged;
- 5  }
+ 2    return ctx.actionsLogged;
+ 3  }
 ```
 
 We can now increment the `actionsLogged` value in our reducer.
@@ -89,7 +89,7 @@ We can now increment the `actionsLogged` value in our reducer.
  4    ctx.actionsLogged = 0;
  5
  6    return function analytics(state, action) {
- 7      ctx.actionsLogged; += 1;
+ 7      ctx.actionsLogged += 1;
  8
  9      fetch(url, {
 10        body:    JSON.stringify(action),
@@ -106,8 +106,8 @@ We can now increment the `actionsLogged` value in our reducer.
 21  ...
 22
 23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin(wrapReducer, useValue);
-28
-29  export { withAnalytics, useAnalytics, analyticsContext };
+24
+25  export { withAnalytics, useAnalytics, analyticsContext };
 ```
 
 We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook to read the value and the context needed by class based components (*line 23*).
