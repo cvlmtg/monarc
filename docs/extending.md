@@ -1,31 +1,35 @@
 # Extending the store
 
-MONARC can be extended with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality. These plugins are created with the `createPlugin` function, which accepts a variable number of arguments.
+MONARC can be extended with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
+
+A plugin consists of two parts. The first one extends the store's reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application. To create this component we will pass a React hook to calculate the value of the context.
+
+A plugin is created with the `createPlugin` function.
+
+## Syntax
 
 ```js
-const [ ... ] = createPlugin(wrapReducer[, defaults]);
-const [ ... ] = createPlugin(wrapReducer, useValue[, defaults]);
+const [ plugin, hook, context ] = createPlugin(wrapReducer[, defaults]);
+const [ plugin, hook, context ] = createPlugin(wrapReducer, useValue[, defaults]);
 ```
 
-A plugin consists of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application. To create this component we will pass a React hook to calculate the value of the context.
+### Parameters
 
-A plugin can accept some options, so if we want to have some default values, we can pass them to the `createPlugin` function as the last argument, e.g.
+* `wrapReducer`
 
+  This is a function that is used to extend a reducer and returns another reducer.
 
-```js
-const defaults = {
-  endpointUrl: 'https://example.com/',
-  timeout: 5000
-};
+* `useValue` (optional)
 
-const [ ... ] = createPlugin(wrapReducer, useValue, defaults);
-```
+  This is an optional React hook that is called to calculate the value of the plugin context on each render.
 
-Or, if we want to create just a reducer:
+* `defaults` (optional)
 
-```js
-const [ ... ] = createPlugin(wrapReducer, defaults);
-```
+  A plugin can accept some options, so if we want to have some default values, we can pass them to the `createPlugin` function as the last argument.
+
+### Return value
+
+An array containing our plugin, plus, if we supplied the `useValue` hook, another hook that may be used by functional components to read the plugin context value (like the built-in `useAutoSave` or `useUndoRedo` hooks) and the plugin context for class based components (please refer to the [React documentation](https://en.reactjs.org/docs/context.html#classcontexttype) for more information).
 
 ## A simple example
 
