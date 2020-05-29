@@ -1,8 +1,31 @@
 # Extending the store
 
-MONARC can be extend with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
+MONARC can be extended with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality. These plugins are created with the `createPlugin` function, which accepts a variable number of arguments.
 
-A plugin consists of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application.
+```js
+const [ ... ] = createPlugin(wrapReducer[, defaults]);
+const [ ... ] = createPlugin(wrapReducer, useValue[, defaults]);
+```
+
+A plugin consists of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application. To create this component we will pass a React hook to calculate the value of the context.
+
+A plugin can accept some options, so if we want to have some default values, we can pass them to the `createPlugin` function as the last argument, e.g.
+
+
+```js
+const defaults = {
+  endpointUrl: 'https://example.com/',
+  timeout: 5000
+};
+
+const [ ... ] = createPlugin(wrapReducer, useValue, defaults);
+```
+
+Or, if we want to create just a reducer:
+
+```js
+const [ ... ] = createPlugin(wrapReducer, defaults);
+```
 
 ## A simple example
 
@@ -44,7 +67,7 @@ Now we need to write our plugin function.
  9  export { withAnalytics };
 ```
 
-We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*) and then we are ready to export our plugin with the name we like (*line 9*). Our plugin is ready to be used in our application.
+We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*) and then we are ready to export our plugin, which we have called `withAnalytics` (*line 9*). Our plugin is ready to be used in our application.
 
 *container.jsx*
 
@@ -110,27 +133,7 @@ We can now increment the `actionsLogged` value in our reducer.
 25  export { withAnalytics, useAnalytics, analyticsContext };
 ```
 
-We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook to read the value and the context needed by class based components (*line 23*).
-
-## Options
-
-Our plugin will accept an optional `options` object as its second argument. If we need to provide some default values, we can pass them to the `createPlugin` function as the last argument, e.g.
-
-```js
-
-const defaults = {
-  endpointUrl: 'https://example.com/',
-  timeout: 5000
-};
-
-const [ ... ] = createPlugin(wrapReducer, useValue, defaults);
-```
-
-Or, if we want to create just a reducer:
-
-```js
-const [ ... ] = createPlugin(wrapReducer, defaults);
-```
+We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook (which we have called `useAnalytics`) to read the context value, and the context needed by class based components (*line 23*).
 
 ---
 
