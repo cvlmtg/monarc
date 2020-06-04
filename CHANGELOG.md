@@ -1,3 +1,9 @@
+## [2.0.0] - 2020-06-04
+
+### Changed
+
+- Completely overhauled the plugin API. Extending the store should now be much easier.
+
 ## [1.0.4] - 2020-05-16
 
 ### Added

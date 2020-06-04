@@ -86,18 +86,21 @@ describe('the withAutoSave plugin', () => {
     const action = { type: 'increment-count' };
     let updated  = null;
 
-    const { reducer } = withAutoSave(reduce, {
+    const { reducer, ctx } = withAutoSave(reduce, {
       onSave: (saving) => {
         expect(state.count).toBe(1);
         expect(saving.count).toBe(2);
         expect(updated.count).toBe(2);
         expect(updated).toBe(saving);
+        expect(ctx.timer).toBe(null);
         done();
       },
       delay: 0
     });
 
     updated = reducer(state, action);
+
+    expect(ctx.timer).not.toBe(null);
   });
 
   it("doesn't start the timer if it's already running", (done) => {
@@ -123,7 +126,7 @@ describe('the withAutoSave plugin', () => {
     const action = { type: 'increment-count' };
     let updated  = null;
 
-    const { reducer } = withAutoSave(reduce, {
+    const { reducer, ctx } = withAutoSave(reduce, {
       onBeforeUpdate: () => true,
       onUpdate:       () => true,
       onSave:         (saving) => {
@@ -137,6 +140,7 @@ describe('the withAutoSave plugin', () => {
 
     updated = reducer(state, action);
 
+    expect(ctx.timer).toBe(null);
     expect(updated.count).toBe(2);
   });
 
@@ -167,5 +171,84 @@ describe('the withAutoSave plugin', () => {
 
     expect(state.count).toBe(1);
     expect(updated.count).toBe(5);
+  });
+
+  it('renders when saving asynchronous (onUpdate)', (done) => {
+    const action = { type: 'increment-count' };
+    const spy    = jest.fn(() => undefined);
+    let updated  = null;
+
+    const { reducer, ctx } = withAutoSave(reduce, {
+      onSave: (saving) => {
+        expect(state.count).toBe(1);
+        expect(saving.count).toBe(2);
+
+        setTimeout(() => {
+          expect(spy.mock.calls.length).toBe(1);
+          done();
+        }, 0);
+      },
+      delay: 0
+    });
+
+    ctx.render = spy;
+    updated    = reducer(state, action);
+
+    expect(updated.count).toBe(2);
+  });
+
+  it('renders when saving asynchronous (onBeforeUpdate)', (done) => {
+    const action = { type: 'increment-count' };
+    const spy    = jest.fn(() => undefined);
+    let updated  = null;
+
+    const { reducer, ctx } = withAutoSave(reduce, {
+      onBeforeUpdate: () => true,
+      onUpdate:       () => true,
+      onSave:         (saving, callback) => {
+        expect(state.count).toBe(1);
+        expect(saving.count).toBe(1);
+        expect(updated).toBe(null);
+        callback();
+
+        setTimeout(() => {
+          expect(spy.mock.calls.length).toBe(1);
+          done();
+        }, 0);
+      },
+      delay: 100
+    });
+
+    ctx.render = spy;
+    updated    = reducer(state, action);
+
+    expect(updated.count).toBe(2);
+  });
+
+  it("doesn't render when saving immediatel (onBeforeUpdate)y", (done) => {
+    const action = { type: 'increment-count' };
+    const spy    = jest.fn(() => undefined);
+    let updated  = null;
+
+    const { reducer, ctx } = withAutoSave(reduce, {
+      onBeforeUpdate: () => true,
+      onUpdate:       () => true,
+      onSave:         (saving) => {
+        expect(state.count).toBe(1);
+        expect(saving.count).toBe(1);
+        expect(updated).toBe(null);
+
+        setTimeout(() => {
+          expect(spy.mock.calls.length).toBe(0);
+          done();
+        }, 0);
+      },
+      delay: 100
+    });
+
+    ctx.render = spy;
+    updated    = reducer(state, action);
+
+    expect(updated.count).toBe(2);
   });
 });

@@ -1,5 +1,5 @@
 import type { MaybeReducer, State, Action } from './typings';
-import { splitReducer } from './utils';
+import { splitReducer } from './create-plugin';
 import PropTypes from 'prop-types';
 import React, {
   useContext, useLayoutEffect, useReducer, useMemo,

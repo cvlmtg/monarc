@@ -178,9 +178,9 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 Using this function enables the auto-save feature. Whenever the state changes, a timer will be triggered. When the timer expires the current state of the application will be saved. We can also choose to save the state *before* the change.
 
-The save will be immediately triggered on the [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) event too.
+The save will be immediately triggered on unmount and on the [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) event too.
 
-**NOTE:** The function `withAutoSave` should always be the most external one.
+**NOTE:** The function `withAutoSave` should always be called last.
 
 ### Auto-save options
 

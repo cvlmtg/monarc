@@ -404,7 +404,7 @@ describe('the withUndoRedo plugin', () => {
     expect(queryByText('REDO false')).toBeTruthy();
   });
 
-  it('creates a context provide (2)', () => {
+  it('creates a context provider (2)', () => {
     const dispatcher = { dispatch: null };
     const undoRedo   = withUndoRedo(reduce);
     const Component  = createContainer(Container, undoRedo, dispatcher);

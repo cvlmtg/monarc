@@ -1,8 +1,35 @@
 # Extending the store
 
-MONARC can be extend with you own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
+MONARC can be extended with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
 
-A plugin is built of two parts. The first one wraps the reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application.
+A plugin consists of two parts. The first one extends the store's reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application. To create this component we will pass a React hook to calculate the value of the context.
+
+A plugin is created with the `createPlugin` function.
+
+## Syntax
+
+```js
+const [ plugin, hook, context ] = createPlugin(wrapReducer[, defaults]);
+const [ plugin, hook, context ] = createPlugin(wrapReducer, useValue[, defaults]);
+```
+
+### Parameters
+
+* `wrapReducer`
+
+  This is a function that is used to extend a reducer and returns another reducer.
+
+* `useValue` (optional)
+
+  This is an optional React hook that is called to calculate the value of the plugin context on each render.
+
+* `defaults` (optional)
+
+  A plugin can accept some options, so if we want to have some default values, we can pass them to the `createPlugin` function as the last argument.
+
+### Return value
+
+An array containing our plugin, plus, if we supplied the `useValue` hook, another hook that may be used by functional components to read the plugin context value (like the built-in `useAutoSave` or `useUndoRedo` hooks) and the plugin context for class based components (please refer to the [React documentation](https://en.reactjs.org/docs/context.html#classcontexttype) for more information).
 
 ## A simple example
 
@@ -11,7 +38,7 @@ Let's suppose we want to collect some data to analyze how our users uses the app
 *with-analytics.js*
 
 ```js
- 1  function wrapReducer(reduce, options) {
+ 1  function wrapReducer(reduce, ctx, options) {
  2    const url = options.endpointUrl;
  3
  4    return function analytics(state, action) {
@@ -28,187 +55,89 @@ Let's suppose we want to collect some data to analyze how our users uses the app
 15  }
 ```
 
-The `wrapReducer` function receives a "child" reducer and the options we pass when invoking our `withAnalytics` plugin. Then it returns another reducer which will do all the logging (*line 4*). Like any other reducer, it must return the new state, so we can just invoke the child reducer (*line 13*).
+The `wrapReducer` function receives a reducer and the options we pass when invoking our `withAnalytics` plugin. Then it returns another reducer which will do all the logging (*line 4*). Like any other reducer, it must return the new state, so we can just invoke the child reducer (*line 13*).
 
 Now we need to write our plugin function.
 
 ```js
- 1  import { splitReducer, assembleReducer } from 'monarc';
+ 1  import { createPlugin } from 'monarc';
  2
- 3  function wrapReducer(reduce, options) {
+ 3  function wrapReducer(reduce, ctx, options) {
  4    ...
  5  }
  6
- 7  export function withAnalytics(maybeReducer, options) {
- 8    const [ reducer, Provider ] = splitReducer(maybeReducer);
- 9
-10    const wrapped = wrapReducer(reducer, options);
-11
-12    return assembleReducer(wrapped, Provider);
-13  }
+ 7  const [ withAnalytics ] = createPlugin(wrapReducer);
+ 8
+ 9  export { withAnalytics };
 ```
 
-It can receive a reducer, or an array of reducers, or a reducer which has already been extended with another plugin. To handle all of these cases, we call the `splitReducer` function, which returns the real reducer function and a React component which is the (optional) context provider (*line 8*).
-
-After we have wrapped the reducer, we can return it. Since we haven't built any new context provider, we have to return the one we received. To do this we use the `assembleReducer` function (*line 12*).
-
-Our plugin is ready to be used in our application.
+We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*) and then we are ready to export our plugin, which we have called `withAnalytics` (*line 9*). Our plugin is ready to be used in our application.
 
 *container.jsx*
 
 ```jsx
-import counterReducer from './counter-reducer';
-import withAnalytics from './with-analytics';
-import { createContainer } from 'monarc';
-
-const options = { endpointUrl: 'https://example.com/etc...' };
-const reducer = withAnalytics(counterReducer, options);
-
-function CounterContainer({ store }) {
-  return (
-    <div>
-      <Header user={store.user} />
-      <Application />
-    </div>
-  );
-}
-
-export default createContainer(CounterContainer, reducer);
+ 1  import { createContainer, useStore } from 'monarc';
+ 2  import { withAnalytics } from './with-analytics';
+ 3  import counterReducer from './counter-reducer';
+ 4
+ 5  const options = { endpointUrl: 'https://example.com/etc...' };
+ 6  const reducer = withAnalytics(counterReducer, options);
+ 7
+ 8  function CounterContainer() {
+ 9    const store = useStore();
+10
+11    return (
+12      <div>
+13        <Header user={store.user} />
+14        <Application />
+15      </div>
+16    );
+17  }
+18
+19  export default createContainer(CounterContainer, reducer);
 ```
 
 ## A full fledged plugin
 
-Suppose that now we want to display the number of actions logged. We need to create a context provider so that another component of our application can read it and display it in the right place.
-
-First we create a context with React's `createContext` (*line 8*) and then a custom hook to read from it (*line 10*).
+Suppose that now we want to display the number of actions logged. We need to create a context provider, so that another component of our application can read it and display it in the right place. We don't need to manually create it, we just need a hook that will return the correct value.
 
 ```jsx
- 1  import React, { useMemo, useState, useContext, createContext } from 'react';
- 2  import { splitReducer, assembleReducer } from 'monarc';
- 3
- 4  function wrapReducer(reduce, options, ctx) {
- 5    ...
- 6  }
- 7
- 8  export const analyticsContext = createContext(0);
- 9
-10  export function useAnalytics() {
-11    return useContext(analyticsContext);
-12  }
-13
-14  export function withAnalytics(maybeReducer, options) {
-15    ...
-16  }
+ 1  function useValue(ctx) {
+ 2    return ctx.actionsLogged;
+ 3  }
 ```
 
-Then we create our component, which renders the context provider with the number of actions processed. We have to also render the `<Provider>` we have been passed (*line 9*) and our children. Then we can return our wrapped reducer and our new component (*line 22*).
+We can now increment the `actionsLogged` value in our reducer.
 
 ```jsx
- 1  export function withAnalytics(maybeReducer, options) {
- 2    const [ reducer, Provider ] = splitReducer(maybeReducer);
- 3
- 4    const AnalyticsProvider = ({ children }) => {
- 5      const [ count, setCount ] = useState(0);
- 6
- 7      return (
- 8        <analyticsContext.Provider value={count}>
- 9          <Provider>
-10            {children}
-11          </Provider>
-12        </analyticsContext.Provider>
-13      );
-14    };
-15
-16    AnalyticsProvider.propTypes = {
-17      children: PropTypes.node
-18    };
-19
-20    ...
-21
-22    return assembleReducer(wrapped, AnalyticsProvider);
-23  }
-```
-
-Now we just need a way to increment our counter every time we process an action.
-
-```jsx
- 1  function wrapReducer(reduce, options, ctx) {
+ 1  function wrapReducer(reduce, ctx, options) {
  2    const url = options.endpointUrl;
  3
- 4    return function analytics(state, action) {
- 5      fetch(url, {
- 6        body:    JSON.stringify(action),
- 7        method:  'POST',
- 8        headers: {
- 9          'Content-Type': 'application/json'
-10        }
-11      })
-12      .then(() => {
-13        ctx.increment();
-14      });
-15
-16      return reduce(state, action);
-17    }
-18  }
-19
-20  ...
-21
-22  export function withAnalytics(maybeReducer, options) {
-23    const [ reducer, Provider ] = splitReducer(maybeReducer);
+ 4    ctx.actionsLogged = 0;
+ 5
+ 6    return function analytics(state, action) {
+ 7      ctx.actionsLogged += 1;
+ 8
+ 9      fetch(url, {
+10        body:    JSON.stringify(action),
+11        method:  'POST',
+12        headers: {
+13          'Content-Type': 'application/json'
+14        }
+15      });
+16
+17      return reduce(state, action);
+18    }
+19  }
+20
+21  ...
+22
+23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin(wrapReducer, useValue);
 24
-25    const ctx = {
-26      increment: () => null
-27    };
-28
-29    const AnalyticsProvider = ({ children }) => {
-30      const [ count, setCount ] = useState(0);
-31
-32      useEffect(() => {
-33        ctx.increment = () => setCount(count + 1);
-34      }, [ count ]);
-35
-36      return (
-37        ...
-38      );
-39    };
-40
-41    ...
-42
-43    const wrapped = wrapReducer(reducer, options, ctx);
-44
-45    return assembleReducer(wrapped, AnalyticsProvider);
-46  }
+25  export { withAnalytics, useAnalytics, analyticsContext };
 ```
 
-We create an object (*line 25*) that gets passed to our reducer (*line 43*). In our reducer we will then call the `increment` method after our POST to the logging server (*line 13*). There's a catch though: since React's hooks works only inside components, we can't prepare our `increment` function immediately. We have to wait for our component to be rendered first, then we can replace the dummy `increment` with the real one calling `setCount`. To do this we can use the `useEffect` hook (*line 32*).
-
-**NOTE:** In this example we can use the `useState` hook because we are updating the counter asynchronously, i.e. after the action have been processed and the new state has been created. If we tried to call `setCount` synchronously, we would have had an error, because we would have had both the `<Container />` and our `<AnalyticsProvider />` trying to render at the same time, and React doesn't like that...
-
-If we can't update our counter asynchronously, we can simply put a `count` value instead of the `increment` function and update that. After the action has been processed the `<Container />` will re-render and so will do our `<AnalyticsProvider />`. Then we just need to read `ctx.count`.
-
-```jsx
-export function withAnalytics(maybeReducer, options) {
-  const [ reducer, Provider ] = splitReducer(maybeReducer);
-
-  const ctx = {
-    count: 0
-  };
-
-  const AnalyticsProvider = ({ children }) => {
-    const count = ctx.count;
-
-    return (
-      <analyticsContext.Provider value={count}>
-        <Provider>
-          {children}
-        </Provider>
-      </analyticsContext.Provider>
-    );
-  };
-
-  ...
-}
-```
+We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook (which we have called `useAnalytics`) to read the context value, and the context needed by class based components (*line 23*).
 
 ---
 

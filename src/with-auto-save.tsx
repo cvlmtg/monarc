@@ -1,12 +1,7 @@
-import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './typings';
-import { splitReducer, assembleReducer } from './utils';
+import type { Reducer, State, Action } from './typings';
+import { useEffect, useState, useMemo } from 'react';
+import { createPlugin } from './create-plugin';
 import invariant from 'tiny-invariant';
-import PropTypes from 'prop-types';
-import React, {
-  useContext, useEffect, useState, useMemo,
-  createContext, Context,
-  FunctionComponent
-} from 'react';
 
 // ---------------------------------------------------------------------
 
@@ -18,13 +13,6 @@ type SaveOptions = {
   onUpdate: UpdateFunction;
   onSave: SaveFunction;
   delay: number;
-}
-
-type UserOptions = {
-  onBeforeUpdate?: UpdateFunction;
-  onUpdate?: UpdateFunction;
-  onSave: SaveFunction;
-  delay?: number;
 }
 
 type InternalState = {
@@ -40,6 +28,8 @@ type SaveContext = {
 // ---------------------------------------------------------------------
 
 function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean): void {
+  clearTimeout(ctx.timer);
+
   ctx.timer = null;
 
   if (onSave.length === 2) {
@@ -56,16 +46,24 @@ function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean
   }
 }
 
-function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState): Reducer {
-  const SAVE    = save.bind(null, ctx, options.onSave);
-  const NOW     = options.onBeforeUpdate;
-  const LATER   = options.onUpdate;
-  const DELAY   = options.delay;
+function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions): Reducer {
+  const SAVE  = save.bind(null, ctx, options.onSave);
+  const NOW   = options.onBeforeUpdate;
+  const LATER = options.onUpdate;
+  const DELAY = options.delay;
+
+  invariant(typeof options.onSave === 'function', 'missing onSave function');
+  invariant(options.delay >= 0, 'invalid delay value');
+
+  // initialize our state
+
+  ctx.render = (): void => undefined;
+  ctx.state  = null;
+  ctx.timer  = null;
 
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
       if (ctx.timer) {
-        clearTimeout(ctx.timer);
         SAVE(true);
       }
     });
@@ -89,7 +87,6 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
     }
 
     if (saveNow === true) {
-      clearTimeout(ctx.timer);
       ctx.state = state;
       SAVE(true);
     }
@@ -100,79 +97,44 @@ function wrapReducer(reduce: Reducer, options: SaveOptions, ctx: InternalState):
   };
 }
 
+function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
+  const [ counter, setCounter ] = useState(0);
+  const isSaved = ctx.timer === null;
+
+  // the little function below here is just a dirty trick to make this
+  // component render when our timer expires and we have saved our data.
+  // beware that we cannot call it inside the reducer, otherwise there
+  // would be two components trying to render at the same time (this
+  // component and the store container) and react doesn't like it...
+
+  useEffect(() => {
+    ctx.render = (): void => setCounter(counter + 1);
+  }, [ counter ]); // eslint-disable-line
+
+  // save our state on unmount if there's a timer active
+
+  useEffect(() => {
+    const onSave = options.onSave;
+
+    return (): void => {
+      ctx.render = (): void => undefined;
+
+      if (ctx.timer) {
+        save(ctx, onSave, true);
+      }
+    };
+  }, []); // eslint-disable-line
+
+  return useMemo(() => ({ isSaved }), [ isSaved ]);
+}
+
+const defaults = {
+  onUpdate: (): boolean => true,
+  delay:    5 * 1000
+};
+
 // ---------------------------------------------------------------------
 
-export const saveContext: Context<SaveContext> = createContext<SaveContext>({
-  isSaved: false
-});
+const [ withAutoSave, useAutoSave, saveContext ] = createPlugin(wrapReducer, useValue, defaults);
 
-export function useAutoSave(): SaveContext {
-  return useContext(saveContext);
-}
-
-export function withAutoSave(maybeReducer: MaybeReducer, options: UserOptions): ReducerProvider {
-  const [ reducer, Provider ] = splitReducer(maybeReducer);
-
-  const opts: SaveOptions = {
-    onUpdate: () => true,
-    delay:    5 * 1000,
-    ...options
-  };
-
-  const ctx: InternalState = {
-    render: (): void => undefined,
-    state:  null,
-    timer:  null
-  };
-
-  invariant(opts.delay >= 0, 'invalid delay value');
-  invariant(typeof opts.onSave === 'function', 'missing onSave function');
-
-  const AutoSaveProvider: FunctionComponent = ({ children }) => {
-    const [ counter, setCounter ] = useState(0);
-
-    const isSaved = ctx.timer === null;
-    const value   = useMemo(() => ({ isSaved }), [ isSaved ]);
-
-    // save our state on unmount if there's a timer active
-
-    useEffect(() => {
-      const onSave = options.onSave;
-
-      return (): void => {
-        ctx.render = (): void => undefined;
-
-        if (ctx.timer) {
-          clearTimeout(ctx.timer);
-          save(ctx, onSave, true);
-        }
-      };
-    }, []);
-
-    // the little function below here is just a dirty trick to make this
-    // component render when our timer expires and we have saved our data.
-    // beware that we cannot call it inside the reducer, otherwise there
-    // would be two components trying to render at the same time (this
-    // component and the store container) and react doesn't like it...
-
-    useEffect(() => {
-      ctx.render = (): void => setCounter(counter + 1);
-    }, [ counter ]);
-
-    return (
-      <saveContext.Provider value={value}>
-        <Provider>
-          {children}
-        </Provider>
-      </saveContext.Provider>
-    );
-  };
-
-  AutoSaveProvider.propTypes = {
-    children: PropTypes.node
-  };
-
-  const wrapped = wrapReducer(reducer, opts, ctx);
-
-  return assembleReducer(wrapped, AutoSaveProvider, ctx);
-}
+export { withAutoSave, useAutoSave, saveContext };

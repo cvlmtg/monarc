@@ -1,11 +1,7 @@
-import type { MaybeReducer, ReducerProvider, Reducer, State, Action } from './typings';
-import { splitReducer, assembleReducer } from './utils';
+import type { Reducer, State, Action } from './typings';
+import { createPlugin } from './create-plugin';
 import invariant from 'tiny-invariant';
-import PropTypes from 'prop-types';
-import React, {
-  useContext, useMemo, createContext, Context,
-  FunctionComponent
-} from 'react';
+import { useMemo } from 'react';
 
 // ---------------------------------------------------------------------
 
@@ -19,14 +15,6 @@ type UndoOptions = {
   undoAction: string;
   redoAction: string;
   maxUndo: number;
-}
-
-type UserOptions = {
-  setState?: RestoreFunction;
-  getState?: RetrieveFuncion;
-  undoAction?: string;
-  redoAction?: string;
-  maxUndo?: number;
 }
 
 type InternalState = {
@@ -55,12 +43,33 @@ function swap(current: PS, from: Array<PS>, to: Array<PS>): PS | undefined {
   return popped;
 }
 
-function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState): Reducer {
+function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions): Reducer {
+  const get      = options.getState === defaultGetSet;
+  const set      = options.setState === defaultGetSet;
+  const both     = get === false && set === false;
+  const none     = get === true && set === true;
   const UNDO     = options.undoAction;
   const REDO     = options.redoAction;
   const RESTORE  = options.setState;
   const RETRIEVE = options.getState;
   const MAX_UNDO = options.maxUndo;
+
+  // the user can't supply only one function for getState / setState,
+  // that's probably an error
+
+  invariant(reduce.name !== 'autoSave', 'cannot call withAutoSave before withUndoRedo');
+  invariant(typeof options.getState === 'function', 'missing getState function');
+  invariant(typeof options.setState === 'function', 'missing setState function');
+  invariant(none || both, 'you must supply both getState and setState');
+  invariant(options.undoAction, 'invalid undoAction value');
+  invariant(options.redoAction, 'invalid redoAction value');
+  invariant(options.maxUndo >= 0, 'invalid maxUndo value');
+
+  // initialize our state
+
+  ctx.prev = null;
+  ctx.undo = [];
+  ctx.redo = [];
 
   return function undoRedo(state: State, action: Action): State {
     const stream = action.undoStream === true && action.type === ctx.prev;
@@ -128,70 +137,23 @@ function wrapReducer(reduce: Reducer, options: UndoOptions, ctx: InternalState):
   };
 }
 
+function useValue(ctx: InternalState): UndoContext {
+  const canUndo = ctx.undo.length !== 0;
+  const canRedo = ctx.redo.length !== 0;
+
+  return useMemo(() => ({ canUndo, canRedo }), [ canUndo, canRedo ]);
+}
+
+const defaults = {
+  setState:   defaultGetSet,
+  getState:   defaultGetSet,
+  undoAction: 'UNDO',
+  redoAction: 'REDO',
+  maxUndo:    50
+};
+
 // ---------------------------------------------------------------------
 
-export const undoContext: Context<UndoContext> = createContext<UndoContext>({
-  canUndo: false,
-  canRedo: false
-});
+const [ withUndoRedo, useUndoRedo, undoContext ] = createPlugin(wrapReducer, useValue, defaults);
 
-export function useUndoRedo(): UndoContext {
-  return useContext(undoContext);
-}
-
-export function withUndoRedo(maybeReducer: MaybeReducer, options: UserOptions = {}): ReducerProvider {
-  const [ reducer, Provider ] = splitReducer(maybeReducer);
-
-  const opts: UndoOptions = {
-    setState:   defaultGetSet,
-    getState:   defaultGetSet,
-    undoAction: 'UNDO',
-    redoAction: 'REDO',
-    maxUndo:    50,
-    ...options
-  };
-
-  const ctx: InternalState = {
-    prev: null,
-    undo: [],
-    redo: []
-  };
-
-  // the user can't supply only one function for getState / setState,
-  // that's probably an error
-
-  const get  = opts.getState === defaultGetSet;
-  const set  = opts.setState === defaultGetSet;
-  const both = get === false && set === false;
-  const none = get === true && set === true;
-
-  invariant(opts.maxUndo >= 0, 'invalid maxUndo value');
-  invariant(opts.undoAction, 'invalid undoAction value');
-  invariant(opts.redoAction, 'invalid redoAction value');
-  invariant(none || both, 'you must supply both getState and setState');
-  invariant(typeof opts.getState === 'function', 'missing getState function');
-  invariant(typeof opts.setState === 'function', 'missing setState function');
-  invariant(reducer.name !== 'autoSave', 'cannot call withAutoSave before withUndoRedo');
-
-  const UndoRedoProvider: FunctionComponent = ({ children }) => {
-    const canUndo = ctx.undo.length !== 0;
-    const canRedo = ctx.redo.length !== 0;
-    const value   = useMemo(() => ({ canUndo, canRedo }), [ canUndo, canRedo ]);
-
-    return (
-      <undoContext.Provider value={value}>
-        <Provider>
-          {children}
-        </Provider>
-      </undoContext.Provider>
-    );
-  };
-
-  UndoRedoProvider.propTypes = {
-    children: PropTypes.node
-  };
-
-  const wrapped = wrapReducer(reducer, opts, ctx);
-
-  return assembleReducer(wrapped, UndoRedoProvider, ctx);
-}
+export { withUndoRedo, useUndoRedo, undoContext };
