@@ -1,3 +1,9 @@
+## [2.1.1] - 2020-06-10
+
+### Fixed
+
+- There are no changes in this release, I just messed up with npm publish, so I need to bump version number...
+
 ## [2.1.0] - 2020-06-10
 
 ### Added
