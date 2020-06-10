@@ -210,12 +210,12 @@ This function accepts the following options:
 
 - **onBeforeUpdate** (optional)
 
-  This is basically the same of `onUpdate`, but if it returns true, the *previous* state is saved immediately.
+  This is basically the same of `onUpdate`, but if it returns true, the *previous* state is saved immediately. This function gets an extra parameter telling if the auto-save timer is active.
 
   Suppose we are writing a file navigation app for our Google Drive or Dropbox account. We have the usual icons and list visualization modes. When we change folder, we want to save the visualization mode for the folder we just left, not for the new one.
 
   ```typescript
-  onBeforeUpdate: (previous: any, updated: any, action: object) => boolean;
+  onBeforeUpdate: (previous: any, updated: any, action: object, isTimerActive: boolean) => boolean;
   ```
 
 ## Hooks

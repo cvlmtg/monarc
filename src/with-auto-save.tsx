@@ -5,8 +5,13 @@ import invariant from 'tiny-invariant';
 
 // ---------------------------------------------------------------------
 
-type UpdateFunction = (previous: State, updated: State, action: Action) => boolean;
 type SaveFunction = (state: State, callback?: () => void) => void;
+type UpdateFunction = (
+  previous: State,
+  updated: State,
+  action: Action,
+  isTimerActive?: boolean
+) => boolean;
 
 type SaveOptions = {
   onBeforeUpdate?: UpdateFunction;
@@ -71,11 +76,12 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
 
   return function autoSave(state: State, action: Action): State {
     const updated = reduce(state, action);
+    const timer   = ctx.timer !== null;
     let saveLater = false;
     let saveNow   = false;
 
     if (typeof NOW === 'function') {
-      saveNow = NOW(state, updated, action);
+      saveNow = NOW(state, updated, action, timer);
     }
 
     if (ctx.timer === null && saveNow === false) {
