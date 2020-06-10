@@ -1,3 +1,9 @@
+## [2.1.0] - 2020-06-10
+
+### Added
+
+- The onBeforeUpdate function gets an extra parameter telling if the auto-save timer is active.
+
 ## [2.0.0] - 2020-06-04
 
 ### Changed
