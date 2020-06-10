@@ -2,7 +2,7 @@
   "name": "monarc",
   "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "module": "dist/monarc.esm.js",
   "typings": "dist/index.d.ts",
@@ -56,15 +56,15 @@
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
-    "@testing-library/react": "^10.1.0",
-    "@types/jest": "^25.2.3",
-    "@types/react": "^16.9.35",
+    "@testing-library/react": "^10.2.1",
+    "@types/jest": "^26.0.0",
+    "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "core-js": "^3.6.5",
-    "eslint": "^7.1.0",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint": "^7.2.0",
+    "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
     "husky": "^4.2.5",
@@ -74,7 +74,7 @@
     "react-dom": "^16.13.1",
     "tsdx": "^0.13.2",
     "tslib": "^1.12.0",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.5"
   },
   "dependencies": {
     "tiny-invariant": "^1.1.0"
