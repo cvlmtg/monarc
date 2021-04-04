@@ -1,7 +1,6 @@
 import { createContainer, withUndoRedo, useDispatch } from '../src/index';
 import { fireEvent, render, act } from '@testing-library/react';
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
@@ -28,10 +27,6 @@ const Container = ({ store }) => {
       INCREMENT: {store.count}
     </button>
   );
-};
-
-Container.propTypes = {
-  store: PropTypes.object.isRequired
 };
 
 const State = new Record({
