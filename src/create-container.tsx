@@ -1,10 +1,9 @@
-import type { MaybeReducer, State, Action } from './typings';
+import type { MaybeReducer, State, Dispatch } from './typings';
 import { splitReducer } from './create-plugin';
-import PropTypes from 'prop-types';
+import { storeContext } from './context';
 import React, {
-  useContext, useLayoutEffect, useReducer, useMemo,
-  ComponentType, FunctionComponent,
-  Context, createContext
+  useLayoutEffect, useReducer, useMemo,
+  ComponentType, FunctionComponent
 } from 'react';
 
 // ---------------------------------------------------------------------
@@ -14,35 +13,11 @@ type Container = FunctionComponent<{
   children?: any;
 }>;
 
-type Dispatch = (action: Action) => void;
-
 type Dispatcher = {
   dispatch: Dispatch;
 }
 
-type StoreContext = {
-  dispatch: Dispatch | null;
-  state: State | null;
-}
-
 // ---------------------------------------------------------------------
-
-export const storeContext: Context<StoreContext> = createContext<StoreContext>({
-  dispatch: null,
-  state:    null
-});
-
-export function useDispatch(): Dispatch | null {
-  const { dispatch } = useContext(storeContext);
-
-  return dispatch;
-}
-
-export function useStore(): State | null {
-  const { state } = useContext(storeContext);
-
-  return state;
-}
 
 export function createContainer(
   Component: ComponentType<{ store: State }>,
@@ -75,11 +50,6 @@ export function createContainer(
         </Provider>
       </storeContext.Provider>
     );
-  };
-
-  StoreContainer.propTypes = {
-    initialState: PropTypes.object.isRequired,
-    children:     PropTypes.any
   };
 
   return StoreContainer;
