@@ -1,82 +1,92 @@
-import type { Reducer, State, Action } from './typings';
-import { useEffect, useState, useMemo } from 'react';
+import { Context, useEffect, useState, useMemo } from 'react';
 import { createPlugin } from './create-plugin';
 import invariant from 'tiny-invariant';
 
 // ---------------------------------------------------------------------
 
-type SaveFunction = (state: State, callback?: () => void) => void;
-type UpdateFunction = (
-  previous: State,
-  updated: State,
+type SaveFn = (state: any, callback?: () => void) => void;
+
+type UpdateFn = (
+  previous: any,
+  updated: any,
   action: Action,
   isTimerActive?: boolean
 ) => boolean;
 
-type SaveOptions = {
-  onBeforeUpdate?: UpdateFunction;
-  onUpdate: UpdateFunction;
-  onSave: SaveFunction;
+type SaveOpts = {
+  onBeforeUpdate?: UpdateFn;
+  onUpdate: UpdateFn;
+  onSave: SaveFn;
   delay: number;
-}
+};
 
-type InternalState = {
+type SaveState = {
+  state: unknown | null;
+  timer: number | null;
   render: () => void;
-  state: object | null;
-  timer: any;
-}
+};
 
-type SaveContext = {
+type SaveCtx = {
   isSaved: boolean;
-}
+};
 
 // ---------------------------------------------------------------------
 
-function save(ctx: InternalState, onSave: SaveFunction, onBeforeUpdate?: boolean): void {
-  clearTimeout(ctx.timer);
+function save(ps: SaveState, onSave: SaveFn, onBeforeUpdate?: boolean) {
+  if (ps.timer !== null) {
+    clearTimeout(ps.timer);
+    ps.timer = null;
+  }
 
-  ctx.timer = null;
+  if (ps.state === null) {
+    return;
+  }
 
   if (onSave.length === 2) {
-    onSave(ctx.state, () => {
-      ctx.render();
+    onSave(ps.state, () => {
+      ps.render();
     });
     return;
   }
 
-  onSave(ctx.state);
+  onSave(ps.state);
 
   if (onBeforeUpdate !== true) {
-    ctx.render();
+    ps.render();
   }
 }
 
-function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions): Reducer {
-  const SAVE  = save.bind(null, ctx, options.onSave);
-  const NOW   = options.onBeforeUpdate;
-  const LATER = options.onUpdate;
-  const DELAY = options.delay;
-
+function wrapReducer(
+  reduce: Reducer<any, any>,
+  ps: Partial<SaveState>,
+  options: SaveOpts
+): Reducer<any, any> {
   invariant(typeof options.onSave === 'function', 'missing onSave function');
   invariant(options.delay >= 0, 'invalid delay value');
 
   // initialize our state
 
-  ctx.render = (): void => undefined;
-  ctx.state  = null;
-  ctx.timer  = null;
+  ps.render = (): void => undefined;
+  ps.state  = null;
+  ps.timer  = null;
+
+  const PS    = ps as SaveState;
+  const DELAY = options.delay;
+  const LATER = options.onUpdate;
+  const NOW   = options.onBeforeUpdate;
+  const SAVE  = save.bind(null, PS, options.onSave);
 
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
-      if (ctx.timer) {
+      if (PS.timer !== null) {
         SAVE(true);
       }
     });
   }
 
-  return function autoSave(state: State, action: Action): State {
+  return function autoSave(state: any, action: Action): any {
     const updated = reduce(state, action);
-    const timer   = ctx.timer !== null;
+    const timer   = PS.timer !== null;
     let saveLater = false;
     let saveNow   = false;
 
@@ -84,28 +94,30 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: SaveOptions):
       saveNow = NOW(state, updated, action, timer);
     }
 
-    if (ctx.timer === null && saveNow === false) {
+    if (PS.timer === null && saveNow === false) {
       saveLater = LATER(state, updated, action);
     }
 
     if (saveLater === true) {
-      ctx.timer = setTimeout(SAVE, DELAY);
+      PS.timer = setTimeout(SAVE, DELAY);
     }
 
     if (saveNow === true) {
-      ctx.state = state;
+      PS.state = state;
       SAVE(true);
     }
 
-    ctx.state = updated;
+    PS.state = updated;
 
     return updated;
   };
 }
 
-function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
+function useValue(ps: Partial<SaveState>, options: SaveOpts): SaveCtx {
   const [ counter, setCounter ] = useState(0);
-  const isSaved = ctx.timer === null;
+
+  const PS      = ps as SaveState;
+  const isSaved = PS.timer === null;
 
   // the little function below here is just a dirty trick to make this
   // component render when our timer expires and we have saved our data.
@@ -114,7 +126,7 @@ function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
   // component and the store container) and react doesn't like it...
 
   useEffect(() => {
-    ctx.render = (): void => setCounter(counter + 1);
+    PS.render = (): void => setCounter(counter + 1);
   }, [ counter ]); // eslint-disable-line
 
   // save our state on unmount if there's a timer active
@@ -123,10 +135,10 @@ function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
     const onSave = options.onSave;
 
     return (): void => {
-      ctx.render = (): void => undefined;
+      PS.render = (): void => undefined;
 
-      if (ctx.timer) {
-        save(ctx, onSave, true);
+      if (PS.timer) {
+        save(PS, onSave, true);
       }
     };
   }, []); // eslint-disable-line
@@ -135,12 +147,14 @@ function useValue(ctx: InternalState, options: SaveOptions): SaveContext {
 }
 
 const defaults = {
-  onUpdate: (): boolean => true,
+  onUpdate: () => true,
   delay:    5 * 1000
 };
 
 // ---------------------------------------------------------------------
 
-const [ withAutoSave, useAutoSave, saveContext ] = createPlugin(wrapReducer, useValue, defaults);
+const [ withAutoSave, useAutoSave, saveContext ]
+  : [ WithPlugin<any, SaveOpts>, UsePlugin<SaveCtx>, Context<SaveCtx> ]
+  = createPlugin(wrapReducer, useValue, defaults);
 
 export { withAutoSave, useAutoSave, saveContext };

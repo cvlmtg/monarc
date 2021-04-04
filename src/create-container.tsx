@@ -1,4 +1,3 @@
-import type { MaybeReducer, State, Dispatch } from './typings';
 import { splitReducer } from './create-plugin';
 import { storeContext } from './context';
 import React, {
@@ -8,25 +7,21 @@ import React, {
 
 // ---------------------------------------------------------------------
 
-type Container = FunctionComponent<{
-  initialState: State;
-  children?: any;
+type Container<S> = FunctionComponent<{
+  initialState: S;
+  children?: unknown;
 }>;
-
-type Dispatcher = {
-  dispatch: Dispatch;
-}
 
 // ---------------------------------------------------------------------
 
-export function createContainer(
-  Component: ComponentType<{ store: State }>,
-  maybeReducer: MaybeReducer,
-  dispatcher?: Dispatcher
-): Container {
-  const [ reducer, Provider ] = splitReducer(maybeReducer);
+export function createContainer<S>(
+  Component: ComponentType<{ store: S }>,
+  anyReducer: AnyReducer<S>,
+  dispatcher?: EmptyDispatcher
+): Container<S> {
+  const [ reducer, Provider ] = splitReducer(anyReducer);
 
-  const StoreContainer: Container = ({ initialState, children }) => {
+  const StoreContainer: Container<S> = ({ initialState, children }) => {
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
@@ -41,7 +36,7 @@ export function createContainer(
       <storeContext.Provider value={value}>
         <Provider>
           <storeContext.Consumer>
-            {(current): JSX.Element => (
+            {(current) => (
               <Component store={current.state}>
                 {children}
               </Component>
