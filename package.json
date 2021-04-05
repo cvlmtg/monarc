@@ -1,28 +1,36 @@
 {
   "name": "monarc",
+  "version": "2.1.1",
   "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
-  "version": "2.1.1",
-  "license": "MIT",
-  "module": "dist/monarc.esm.js",
-  "typings": "dist/index.d.ts",
-  "main": "dist/index.js",
-  "files": [
-    "dist",
-    "src"
-  ],
   "homepage": "https://cvlmtg.github.io/monarc/",
   "repository": {
     "url": "git+https://github.com/cvlmtg/monarc.git",
     "type": "git"
   },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "module": "dist/monarc.esm.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "eslint --ext .tsx,.jsx,.ts,.js src/ test/",
+    "prepare": "tsdx build"
+  },
   "husky": {
     "hooks": {
       "pre-push": "yarn lint && yarn test"
     }
-  },
-  "engines": {
-    "node": ">=10"
   },
   "keywords": [
     "react",
@@ -39,29 +47,16 @@
     "flux",
     "redux"
   ],
-  "scripts": {
-    "clean": "rm -rf dist",
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
-    "lint": "eslint --ext .tsx,.jsx,.ts,.js src/ test/",
-    "prepare": "tsdx build"
-  },
   "peerDependencies": {
-    "core-js": "^3.6.5",
-    "react": ">=16.8"
+    "react": ">=17.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.14",
-    "@babel/preset-env": "^7.13.12",
-    "@babel/preset-react": "^7.13.13",
     "@testing-library/react": "^11.2.6",
     "@types/jest": "^26.0.22",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
-    "core-js": "^3.10.0",
     "eslint": "^7.23.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-react": "^7.23.1",
@@ -71,7 +66,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "tsdx": "^0.14.1",
-    "tslib": "^2.1.0",
+    "tslib": "^2.2.0",
     "typescript": "^4.2.3"
   },
   "dependencies": {
