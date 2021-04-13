@@ -25,12 +25,7 @@
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "eslint --ext .tsx,.jsx,.ts,.js src/ test/",
-    "prepare": "tsdx build"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint && yarn test"
-    }
+    "prepare": "tsdx build && husky install"
   },
   "keywords": [
     "react",
