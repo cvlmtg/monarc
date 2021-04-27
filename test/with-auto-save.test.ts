@@ -1,10 +1,13 @@
 import { withAutoSave, withUndoRedo } from '../src/index';
-import { Record } from 'immutable';
+import { RecordOf, Record } from 'immutable';
 
 // ---------------------------------------------------------------------
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-const reduce = (state, action) => {
+interface AppState {
+  count: number;
+}
+
+function reduce(state: RecordOf<AppState>, action: Action): RecordOf<AppState> {
   switch (action.type) {
     case 'increment-count':
       return state.set('count', state.count + 1);
@@ -12,19 +15,19 @@ const reduce = (state, action) => {
     default:
       return state;
   }
-};
+}
 
-const State = new Record({
+const AppState = Record<AppState>({
   count: 1
 });
 
 // ---------------------------------------------------------------------
 
 describe('the withAutoSave plugin', () => {
-  let state;
+  let state: RecordOf<AppState>;
 
   beforeEach(() => {
-    state = new State();
+    state = new AppState();
   });
 
   it('extends one or more reducers', () => {
@@ -40,12 +43,8 @@ describe('the withAutoSave plugin', () => {
 
   it('rejects invalid reducers', () => {
     const emptyArr = () => withAutoSave([]);
-    const wrongObj = () => withAutoSave({});
-    const noArg    = () => withAutoSave();
 
     expect(emptyArr).toThrow();
-    expect(wrongObj).toThrow();
-    expect(noArg).toThrow();
   });
 
   it('extends a wrapped reducer', () => {
@@ -84,15 +83,19 @@ describe('the withAutoSave plugin', () => {
 
   it('starts the timer on update', (done) => {
     const action = { type: 'increment-count' };
-    let updated  = null;
 
-    const { reducer, ctx } = withAutoSave(reduce, {
-      onSave: (saving) => {
+    let updated: RecordOf<AppState> | null = null;
+
+    const { reducer, ps } = withAutoSave(reduce, {
+      onSave: (saving: RecordOf<AppState>) => {
+        const check = updated as RecordOf<AppState>;
+        const PS    = ps as PluginState;
+
         expect(state.count).toBe(1);
         expect(saving.count).toBe(2);
-        expect(updated.count).toBe(2);
+        expect(check.count).toBe(2);
         expect(updated).toBe(saving);
-        expect(ctx.timer).toBe(null);
+        expect(PS.timer).toBe(null);
         done();
       },
       delay: 0
@@ -100,18 +103,23 @@ describe('the withAutoSave plugin', () => {
 
     updated = reducer(state, action);
 
-    expect(ctx.timer).not.toBe(null);
+    const PS = ps as PluginState;
+
+    expect(PS.timer).not.toBe(null);
   });
 
   it("doesn't start the timer if it's already running", (done) => {
     const action = { type: 'increment-count' };
-    let updated  = null;
+
+    let updated: RecordOf<AppState> | null = null;
 
     const { reducer } = withAutoSave(reduce, {
-      onSave: (saving) => {
+      onSave: (saving: RecordOf<AppState>) => {
+        const check = updated as RecordOf<AppState>;
+
         expect(state.count).toBe(1);
         expect(saving.count).toBe(3);
-        expect(updated.count).toBe(3);
+        expect(check.count).toBe(3);
         expect(updated).toBe(saving);
         done();
       },
@@ -124,12 +132,13 @@ describe('the withAutoSave plugin', () => {
 
   it("doesn't start the timer when saving immediately", (done) => {
     const action = { type: 'increment-count' };
-    let updated  = null;
 
-    const { reducer, ctx } = withAutoSave(reduce, {
+    let updated: RecordOf<AppState> | null = null;
+
+    const { reducer, ps } = withAutoSave(reduce, {
       onBeforeUpdate: () => true,
       onUpdate:       () => true,
-      onSave:         (saving) => {
+      onSave:         (saving: RecordOf<AppState>) => {
         expect(state.count).toBe(1);
         expect(saving.count).toBe(1);
         expect(updated).toBe(null);
@@ -138,9 +147,11 @@ describe('the withAutoSave plugin', () => {
       delay: 100
     });
 
-    updated = reducer(state, action);
+    updated = reducer(state, action) as RecordOf<AppState>;
 
-    expect(ctx.timer).toBe(null);
+    const PS = ps as PluginState;
+
+    expect(PS.timer).toBe(null);
     expect(updated.count).toBe(2);
   });
 
@@ -150,9 +161,9 @@ describe('the withAutoSave plugin', () => {
     let updated  = null;
 
     const { reducer } = withAutoSave(reduce, {
-      onBeforeUpdate: (prev) => prev.count % 3 === 0,
+      onBeforeUpdate: (prev: RecordOf<AppState>) => prev.count % 3 === 0,
       onUpdate:       () => true,
-      onSave:         (saving) => {
+      onSave:         (saving: RecordOf<AppState>) => {
         if (before === false) {
           expect(saving.count).toBe(3);
         } else {
@@ -178,8 +189,8 @@ describe('the withAutoSave plugin', () => {
     const spy    = jest.fn(() => undefined);
     let updated  = null;
 
-    const { reducer, ctx } = withAutoSave(reduce, {
-      onSave: (saving) => {
+    const { reducer, ps } = withAutoSave(reduce, {
+      onSave: (saving: RecordOf<AppState>) => {
         expect(state.count).toBe(1);
         expect(saving.count).toBe(2);
 
@@ -191,7 +202,9 @@ describe('the withAutoSave plugin', () => {
       delay: 0
     });
 
-    ctx.render = spy;
+    const PS = ps as PluginState;
+
+    PS.render = spy;
     updated    = reducer(state, action);
 
     expect(updated.count).toBe(2);
@@ -200,16 +213,21 @@ describe('the withAutoSave plugin', () => {
   it('renders when saving asynchronous (onBeforeUpdate)', (done) => {
     const action = { type: 'increment-count' };
     const spy    = jest.fn(() => undefined);
-    let updated  = null;
 
-    const { reducer, ctx } = withAutoSave(reduce, {
+    let updated: RecordOf<AppState> | null = null;
+
+    const { reducer, ps } = withAutoSave(reduce, {
       onBeforeUpdate: () => true,
       onUpdate:       () => true,
-      onSave:         (saving, callback) => {
+      onSave:         (saving: RecordOf<AppState>, callback?) => {
         expect(state.count).toBe(1);
         expect(saving.count).toBe(1);
         expect(updated).toBe(null);
-        callback();
+        expect(typeof callback).toBe('function');
+
+        if (callback) {
+          callback();
+        }
 
         setTimeout(() => {
           expect(spy.mock.calls.length).toBe(1);
@@ -219,8 +237,10 @@ describe('the withAutoSave plugin', () => {
       delay: 100
     });
 
-    ctx.render = spy;
-    updated    = reducer(state, action);
+    const PS = ps as PluginState;
+
+    PS.render = spy;
+    updated    = reducer(state, action) as RecordOf<AppState>;
 
     expect(updated.count).toBe(2);
   });
@@ -228,12 +248,13 @@ describe('the withAutoSave plugin', () => {
   it("doesn't render when saving immediatel (onBeforeUpdate)y", (done) => {
     const action = { type: 'increment-count' };
     const spy    = jest.fn(() => undefined);
-    let updated  = null;
 
-    const { reducer, ctx } = withAutoSave(reduce, {
+    let updated: RecordOf<AppState> | null = null;
+
+    const { reducer, ps } = withAutoSave(reduce, {
       onBeforeUpdate: () => true,
       onUpdate:       () => true,
-      onSave:         (saving) => {
+      onSave:         (saving: RecordOf<AppState>) => {
         expect(state.count).toBe(1);
         expect(saving.count).toBe(1);
         expect(updated).toBe(null);
@@ -246,8 +267,10 @@ describe('the withAutoSave plugin', () => {
       delay: 100
     });
 
-    ctx.render = spy;
-    updated    = reducer(state, action);
+    const PS = ps as PluginState;
+
+    PS.render = spy;
+    updated    = reducer(state, action) as RecordOf<AppState>;
 
     expect(updated.count).toBe(2);
   });

@@ -1,3 +1,11 @@
+## [3.0.0-beta.0] - 2021-04-27
+
+### Changed
+
+- Completely overhauled typescript's types. Hopefully they are much better now.
+- Updated various dependencies, like typescript and tslib.
+- Converted tests from javascript to typescript.
+
 ## [2.1.1] - 2020-06-10
 
 ### Fixed

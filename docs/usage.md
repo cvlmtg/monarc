@@ -30,25 +30,14 @@ This is the component that we will render at the root of our application tree an
 *container.jsx*
 
 ```jsx
-import { createContainer, useDispatch, useStore } from 'monarc';
 import counterReducer from './counter-reducer';
+import { createContainer } from 'monarc';
 
-function CounterContainer() {
-  const dispatch = useDispatch();
-  const store    = useStore();
-
-  useEffect(() => {
-    fetch('https://example.com/api/user.json')
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch({ type: 'USER_LOADED', ...data });
-      });
-  }, []);
-
+function CounterContainer({ store }) {
   return (
     <div>
-      <Header user={store.user} />
-      <Application />
+      <Header />
+      <Counter value={store}/>
     </div>
   );
 }
@@ -146,14 +135,14 @@ function setState(savedState: any, currentState: any) => any
 
 ## Undo / redo flags
 
-We can have a more fine-grained control over the undo / redo behaviour by adding some flags to our actions.
+We can have a more fine-grained control over the undo / redo behaviour by adding some flags to any of our actions.
 
 - **undoSkip**
 
   If any action has this attribute set to true, the state change will not be saved on the undo stack. If we are writing a vector drawing application we might have a list of the shapes drawn, each with a "selected" attribute. If the user resizes a shape and then selects another one, we might decide that pressing the undo button should undo the resize, not the selection.
 
   ```js
-  { type: 'SET_COLOR', color: 'blue', undoSkip: true }
+  { type: 'SELECT_SHAPE', id: 123, undoSkip: true }
   ```
 
 - **undoReset**
@@ -205,7 +194,7 @@ This function accepts the following options:
   This function gets called on every state change to see if the state needs to be saved. If we don't specify it, the auto-save will be triggered on every state change. The function is called with the previous state, the updated state and the action that updated the state.
 
   ```typescript
-  onUpdate: (previous: any, updated: any, action: object) => boolean;
+  onUpdate: (previous: any, updated: any, action: Action) => boolean;
   ```
 
 - **onBeforeUpdate** (optional)
@@ -215,7 +204,7 @@ This function accepts the following options:
   Suppose we are writing a file navigation app for our Google Drive or Dropbox account. We have the usual icons and list visualization modes. When we change folder, we want to save the visualization mode for the folder we just left, not for the new one.
 
   ```typescript
-  onBeforeUpdate: (previous: any, updated: any, action: object, isTimerActive: boolean) => boolean;
+  onBeforeUpdate: (previous: any, updated: any, action: Action, isTimerActive: boolean) => boolean;
   ```
 
 ## Hooks

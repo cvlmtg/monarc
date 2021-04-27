@@ -10,7 +10,7 @@ A plugin is created with the `createPlugin` function.
 
 ```js
 const [ plugin, hook, context ] = createPlugin(wrapReducer[, defaults]);
-const [ plugin, hook, context ] = createPlugin(wrapReducer, useValue[, defaults]);
+const [ plugin, hook, context ] = createPlugin(wrapReducer, contextValue[, defaults]);
 ```
 
 ### Parameters
@@ -19,9 +19,9 @@ const [ plugin, hook, context ] = createPlugin(wrapReducer, useValue[, defaults]
 
   This is a function that is used to extend a reducer and returns another reducer.
 
-* `useValue` (optional)
+* `contextValue` (optional)
 
-  This is an optional React hook that is called to calculate the value of the plugin context on each render.
+  This is an optional function (or React hook, for e.g. using `useMemo`) that is called to calculate the value of the plugin context on each render.
 
 * `defaults` (optional)
 
@@ -29,7 +29,7 @@ const [ plugin, hook, context ] = createPlugin(wrapReducer, useValue[, defaults]
 
 ### Return value
 
-An array containing our plugin, plus, if we supplied the `useValue` hook, another hook that may be used by functional components to read the plugin context value (like the built-in `useAutoSave` or `useUndoRedo` hooks) and the plugin context for class based components (please refer to the [React documentation](https://en.reactjs.org/docs/context.html#classcontexttype) for more information).
+An array containing our plugin, plus, if we supplied the `contextValue` hook, another hook that may be used by functional components to read the plugin context value (like the built-in `useAutoSave` or `useUndoRedo` hooks) and the plugin context for class based components (please refer to the [React documentation](https://en.reactjs.org/docs/context.html#classcontexttype) for more information).
 
 ## A simple example
 
@@ -38,7 +38,7 @@ Let's suppose we want to collect some data to analyze how our users uses the app
 *with-analytics.js*
 
 ```js
- 1  function wrapReducer(reduce, ctx, options) {
+ 1  function wrapReducer(reduce, ps, options) {
  2    const url = options.endpointUrl;
  3
  4    return function analytics(state, action) {
@@ -62,7 +62,7 @@ Now we need to write our plugin function.
 ```js
  1  import { createPlugin } from 'monarc';
  2
- 3  function wrapReducer(reduce, ctx, options) {
+ 3  function wrapReducer(reduce, ps, options) {
  4    ...
  5  }
  6
@@ -102,21 +102,21 @@ We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*
 Suppose that now we want to display the number of actions logged. We need to create a context provider, so that another component of our application can read it and display it in the right place. We don't need to manually create it, we just need a hook that will return the correct value.
 
 ```jsx
- 1  function useValue(ctx) {
- 2    return ctx.actionsLogged;
+ 1  function contextValue(ps) {
+ 2    return ps.actionsLogged;
  3  }
 ```
 
 We can now increment the `actionsLogged` value in our reducer.
 
 ```jsx
- 1  function wrapReducer(reduce, ctx, options) {
+ 1  function wrapReducer(reduce, ps, options) {
  2    const url = options.endpointUrl;
  3
- 4    ctx.actionsLogged = 0;
+ 4    ps.actionsLogged = 0;
  5
  6    return function analytics(state, action) {
- 7      ctx.actionsLogged += 1;
+ 7      ps.actionsLogged += 1;
  8
  9      fetch(url, {
 10        body:    JSON.stringify(action),
@@ -132,12 +132,12 @@ We can now increment the `actionsLogged` value in our reducer.
 20
 21  ...
 22
-23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin(wrapReducer, useValue);
+23  const [ withAnalytics, useAnalytics, analyticsContext ] = createPlugin(wrapReducer, contextValue);
 24
 25  export { withAnalytics, useAnalytics, analyticsContext };
 ```
 
-We initialize our `ctx` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook (which we have called `useAnalytics`) to read the context value, and the context needed by class based components (*line 23*).
+We initialize our `ps` object (*line 4*) that is passed to our hook and to our reducer. Then we increment our counter every time we process an action (*line 7*). The last step is to export the hook (which we have called `useAnalytics`) to read the context value, and the context needed by class based components (*line 23*).
 
 ---
 

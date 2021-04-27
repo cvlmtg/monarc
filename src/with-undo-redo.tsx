@@ -1,58 +1,53 @@
-import type { Reducer, State, Action } from './typings';
 import { createPlugin } from './create-plugin';
+import { Context, useMemo } from 'react';
 import invariant from 'tiny-invariant';
-import { useMemo } from 'react';
 
 // ---------------------------------------------------------------------
 
-type RestoreFunction = (previous: State, current: State) => State;
-type RetrieveFuncion = (state: State) => PS;
-type PS = Partial<State>;
-
-type UndoOptions = {
-  setState: RestoreFunction;
-  getState: RetrieveFuncion;
+type UndoOpts = {
+  setState: (previous: any, current: any) => any;
+  getState: (state: any) => any;
   undoAction: string;
   redoAction: string;
   maxUndo: number;
-}
+};
 
-type InternalState = {
+export type UndoState = {
   prev: string | null;
-  undo: Array<object>;
-  redo: Array<object>;
-}
+  undo: Array<any>;
+  redo: Array<any>;
+};
 
-type UndoContext = {
+type UndoCtx = {
   canUndo: boolean;
   canRedo: boolean;
-}
+};
 
 // ---------------------------------------------------------------------
 
-function defaultGetSet(state: State): State {
-  return state;
-}
-
-function swap(current: PS, from: Array<PS>, to: Array<PS>): PS | undefined {
-  const popped: PS | undefined = from.pop();
+function swap(current: any, from: Array<any>, to: Array<any>): any | undefined {
+  const popped = from.pop();
 
   if (typeof popped !== 'undefined') {
     to.push(current);
   }
+
   return popped;
 }
 
-function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions): Reducer {
-  const get      = options.getState === defaultGetSet;
-  const set      = options.setState === defaultGetSet;
-  const both     = get === false && set === false;
-  const none     = get === true && set === true;
-  const UNDO     = options.undoAction;
-  const REDO     = options.redoAction;
-  const RESTORE  = options.setState;
-  const RETRIEVE = options.getState;
-  const MAX_UNDO = options.maxUndo;
+function defaultGetSet(state: any): any {
+  return state;
+}
+
+function wrapReducer(
+  reduce: Reducer<any, any>,
+  ps: Partial<UndoState>,
+  options: UndoOpts
+): Reducer<any, any> {
+  const get  = options.getState === defaultGetSet;
+  const set  = options.setState === defaultGetSet;
+  const both = get === false && set === false;
+  const none = get === true && set === true;
 
   // the user can't supply only one function for getState / setState,
   // that's probably an error
@@ -67,44 +62,51 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
 
   // initialize our state
 
-  ctx.prev = null;
-  ctx.undo = [];
-  ctx.redo = [];
+  ps.prev = null;
+  ps.undo = [];
+  ps.redo = [];
 
-  return function undoRedo(state: State, action: Action): State {
-    const stream = action.undoStream === true && action.type === ctx.prev;
+  const PS       = ps as UndoState;
+  const MAX_UNDO = options.maxUndo;
+  const SET      = options.setState;
+  const GET      = options.getState;
+  const UNDO     = options.undoAction;
+  const REDO     = options.redoAction;
+
+  return function undoRedo(state: any, action: Action): any {
+    const stream = action.undoStream === true && action.type === PS.prev;
     const reset  = action.undoReset === true;
     const skip   = action.undoSkip === true;
-    let next: PS | undefined;
-    let updated: State;
-    let current: PS;
+    let next: any | undefined;
+    let updated: any;
+    let current: any;
 
     switch (action.type) {
       case UNDO:
-        if (ctx.undo.length === 0) {
+        if (PS.undo.length === 0) {
           return state;
         }
 
-        ctx.prev = null;
-        current  = RETRIEVE(state);
-        next     = swap(current, ctx.undo, ctx.redo);
+        PS.prev = null;
+        current  = GET(state);
+        next     = swap(current, PS.undo, PS.redo);
 
         if (typeof next !== 'undefined') {
-          return RESTORE(next, state);
+          return SET(next, state);
         }
         return state;
 
       case REDO:
-        if (ctx.redo.length === 0) {
+        if (PS.redo.length === 0) {
           return state;
         }
 
-        ctx.prev = null;
-        current  = RETRIEVE(state);
-        next     = swap(current, ctx.redo, ctx.undo);
+        PS.prev = null;
+        current  = GET(state);
+        next     = swap(current, PS.redo, PS.undo);
 
         if (typeof next !== 'undefined') {
-          return RESTORE(next, state);
+          return SET(next, state);
         }
         return state;
 
@@ -112,24 +114,24 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
         updated = reduce(state, action);
 
         if (skip === false && reset === false && stream === false) {
-          next    = RETRIEVE(updated);
-          current = RETRIEVE(state);
+          next    = GET(updated);
+          current = GET(state);
 
           if (current !== next) {
-            if (MAX_UNDO && MAX_UNDO === ctx.undo.length) {
-              ctx.undo.shift();
+            if (MAX_UNDO && MAX_UNDO === PS.undo.length) {
+              PS.undo.shift();
             }
-            ctx.undo.push(current);
-            ctx.redo = [];
+            PS.undo.push(current);
+            PS.redo = [];
           }
         }
 
         if (reset === true) {
-          ctx.undo = [];
-          ctx.redo = [];
+          PS.undo = [];
+          PS.redo = [];
         }
 
-        ctx.prev = action.type;
+        PS.prev = action.type;
         break;
     }
 
@@ -137,9 +139,10 @@ function wrapReducer(reduce: Reducer, ctx: InternalState, options: UndoOptions):
   };
 }
 
-function useValue(ctx: InternalState): UndoContext {
-  const canUndo = ctx.undo.length !== 0;
-  const canRedo = ctx.redo.length !== 0;
+function useValue(ps: Partial<UndoState>): UndoCtx {
+  const PS      = ps as UndoState;
+  const canUndo = PS.undo.length !== 0;
+  const canRedo = PS.redo.length !== 0;
 
   return useMemo(() => ({ canUndo, canRedo }), [ canUndo, canRedo ]);
 }
@@ -154,6 +157,8 @@ const defaults = {
 
 // ---------------------------------------------------------------------
 
-const [ withUndoRedo, useUndoRedo, undoContext ] = createPlugin(wrapReducer, useValue, defaults);
+const [ withUndoRedo, useUndoRedo, undoContext ]
+  : [ WithPlugin<any, UndoOpts>, UsePlugin<UndoCtx>, Context<UndoCtx> ]
+  = createPlugin(wrapReducer, useValue, defaults);
 
 export { withUndoRedo, useUndoRedo, undoContext };

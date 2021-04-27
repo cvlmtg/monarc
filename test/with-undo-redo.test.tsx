@@ -1,12 +1,36 @@
-import { createContainer, useUndoRedo, withUndoRedo, withAutoSave } from '../src/index';
+import { createContainer, withUndoRedo, withAutoSave, useUndoRedo } from '../src/index';
+import type { UndoState } from '../src/with-undo-redo';
 import { render, act } from '@testing-library/react';
-import { Record, List } from 'immutable';
+import { RecordOf, Record, List } from 'immutable';
 import React from 'react';
 
 // ---------------------------------------------------------------------
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-const reduce = (state, action) => {
+interface AppAction extends Action {
+  message: string;
+  color: string;
+  index: number;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+type Shape = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+type AppState = {
+  messages: List<string>;
+  shapes: List<Shape>;
+  color: string;
+  count: number;
+};
+
+const reduce = (state: RecordOf<AppState>, action: AppAction): RecordOf<AppState> => {
   switch (action.type) {
     case 'add-message':
       return state.set('messages', state.messages.push(action.message));
@@ -54,9 +78,9 @@ const Container = () => {
   );
 };
 
-const State = new Record({
-  shapes:   new List(),
-  messages: new List(),
+const StateFactory = Record<AppState>({
+  shapes:   List(),
+  messages: List(),
   color:    'white',
   count:    1
 });
@@ -64,14 +88,14 @@ const State = new Record({
 // ---------------------------------------------------------------------
 
 describe('the withUndoRedo plugin', () => {
-  let state;
+  let state: RecordOf<AppState>;
 
   beforeEach(() => {
-    state = new State();
+    state = new StateFactory();
   });
 
   it('extends one or more reducers', () => {
-    const options = { onSave: () => false };
+    const options = { maxUndo: 0 };
     const simple  = () => withUndoRedo(reduce, options);
     const one     = () => withUndoRedo([ reduce ], options);
     const two     = () => withUndoRedo([ reduce, reduce ], options);
@@ -83,12 +107,8 @@ describe('the withUndoRedo plugin', () => {
 
   it('rejects invalid reducers', () => {
     const emptyArr = () => withUndoRedo([]);
-    const wrongObj = () => withUndoRedo({});
-    const noArg    = () => withUndoRedo();
 
     expect(emptyArr).toThrow();
-    expect(wrongObj).toThrow();
-    expect(noArg).toThrow();
   });
 
   it('checks for correct ordering', () => {
@@ -141,59 +161,62 @@ describe('the withUndoRedo plugin', () => {
   it('reduces a state and an action', () => {
     const { reducer } = withUndoRedo(reduce);
     const action      = { type: 'increment-count' };
-    const updated     = reducer(state, action);
+    const updated     = reducer(state, action) as AppState;
 
     expect(state.count).toBe(1);
     expect(updated.count).toBe(2);
   });
 
   it('resets everything', () => {
-    const reset            = { type: 'increment-count', undoReset: true };
-    const { reducer, ctx } = withUndoRedo(reduce, { maxUndo: 20 });
-    const increment        = { type: 'increment-count' };
-    let updated;
+    const reset           = { type: 'increment-count', undoReset: true };
+    const { reducer, ps } = withUndoRedo(reduce, { maxUndo: 20 });
+    const increment       = { type: 'increment-count' };
+    const PS              = ps as UndoState;
+    let updated: AppState;
 
-    updated = reducer(state, increment);
-    updated = reducer(updated, increment);
-    updated = reducer(updated, increment);
-    updated = reducer(updated, increment);
-    updated = reducer(updated, reset);
-    updated = reducer(updated, increment);
+    updated = reducer(state, increment) as AppState;
+    updated = reducer(updated, increment) as AppState;
+    updated = reducer(updated, increment) as AppState;
+    updated = reducer(updated, increment) as AppState;
+    updated = reducer(updated, reset) as AppState;
+    updated = reducer(updated, increment) as AppState;
 
     expect(state.count).toBe(1);
     expect(updated.count).toBe(7);
-    expect(ctx.undo.length).toBe(1);
-    expect(ctx.redo.length).toBe(0);
+    expect(PS.undo.length).toBe(1);
+    expect(PS.redo.length).toBe(0);
   });
 
   describe('skips some actions', () => {
     const increment = { type: 'increment-count' };
     const undo      = { type: 'UNDO' };
 
-    function testOne(changeColor, options) {
-      const { reducer, ctx } = withUndoRedo(reduce, options);
-      const updated          = reducer(state, changeColor);
+    function testOne(changeColor: Action, options: any) {
+      const { reducer, ps } = withUndoRedo(reduce, options);
+      const updated         = reducer(state, changeColor) as AppState;
+      const PS              = ps as UndoState;
 
       expect(state.color).toBe('white');
       expect(updated.color).toBe('black');
-      expect(ctx.undo.length).toBe(0);
-      expect(ctx.redo.length).toBe(0);
+      expect(PS.undo.length).toBe(0);
+      expect(PS.redo.length).toBe(0);
 
       return updated;
     }
 
-    function testTwo(changeColor, options) {
-      const { reducer, ctx } = withUndoRedo(reduce, options);
-      let updated;
+    function testTwo(changeColor: Action, options: any) {
+      const { reducer, ps } = withUndoRedo(reduce, options);
+      const PS              = ps as UndoState;
+      let updated: RecordOf<AppState>;
 
-      updated = reducer(state, increment);
-      updated = reducer(updated, changeColor);
-      updated = reducer(updated, undo);
+      updated = reducer(state, increment) as RecordOf<AppState>;
+      updated = reducer(updated, changeColor) as RecordOf<AppState>;
+      updated = reducer(updated, undo) as RecordOf<AppState>;
 
       expect(state.count).toBe(1);
       expect(updated.count).toBe(1);
-      expect(ctx.undo.length).toBe(0);
-      expect(ctx.redo.length).toBe(1);
+      expect(PS.undo.length).toBe(0);
+      expect(PS.redo.length).toBe(1);
 
       return updated;
     }
@@ -212,8 +235,8 @@ describe('the withUndoRedo plugin', () => {
     it('partial state', () => {
       const color   = { type: 'select-color', color: 'black' };
       const options = {
-        setState: (count, _state) => _state.set('count', count),
-        getState: (_state) => _state.count,
+        setState: (count: number, _state: RecordOf<AppState>) => _state.set('count', count),
+        getState: (_state: AppState) => _state.count,
         maxUndo:  8
       };
 
@@ -226,10 +249,11 @@ describe('the withUndoRedo plugin', () => {
   });
 
   it('streams actions', () => {
-    const { reducer, ctx } = withUndoRedo(reduce, { maxUndo: 20 });
-    const undo             = { type: 'UNDO' };
-    const undoStream       = true;
-    let updated;
+    const { reducer, ps } = withUndoRedo(reduce, { maxUndo: 20 });
+    const PS              = ps as UndoState;
+    const undo            = { type: 'UNDO' };
+    const undoStream      = true;
+    let updated: RecordOf<AppState>;
 
     updated = reducer(state, { type: 'create-shape', x: 3, y: 3, w: 3, h: 3 });
     updated = reducer(updated, { type: 'create-shape', x: 9, y: 9, w: 9, h: 9 });
@@ -242,21 +266,22 @@ describe('the withUndoRedo plugin', () => {
     expect(state.shapes.size).toBe(0);
     expect(updated.shapes.size).toBe(2);
     expect(updated.shapes.first()).toEqual({ x: 3, y: 3, w: 7, h: 7 });
-    expect(ctx.undo.length).toBe(3);
-    expect(ctx.redo.length).toBe(0);
+    expect(PS.undo.length).toBe(3);
+    expect(PS.redo.length).toBe(0);
 
     updated = reducer(updated, undo);
 
     expect(updated.shapes.first()).toEqual({ x: 3, y: 3, w: 3, h: 3 });
-    expect(ctx.undo.length).toBe(2);
-    expect(ctx.redo.length).toBe(1);
+    expect(PS.undo.length).toBe(2);
+    expect(PS.redo.length).toBe(1);
   });
 
   describe('keeps the correct amount of undoable states', () => {
     it('whole state', () => {
-      const { reducer, ctx } = withUndoRedo(reduce, { maxUndo: 2 });
-      const action           = { type: 'increment-count' };
-      let updated;
+      const { reducer, ps } = withUndoRedo(reduce, { maxUndo: 2 });
+      const PS              = ps as UndoState;
+      const action          = { type: 'increment-count' };
+      let updated: RecordOf<AppState>;
 
       updated = reducer(state, action);
       updated = reducer(updated, action);
@@ -265,20 +290,21 @@ describe('the withUndoRedo plugin', () => {
 
       expect(state.count).toBe(1);
       expect(updated.count).toBe(5);
-      expect(ctx.undo.length).toBe(2);
-      expect(ctx.redo.length).toBe(0);
+      expect(PS.undo.length).toBe(2);
+      expect(PS.redo.length).toBe(0);
     });
 
     it('partial state', () => {
       const type    = 'add-message';
       const options = {
-        setState: (saved, current) => current.set('messages', saved),
-        getState: (current) => current.messages,
+        setState: (saved: List<string>, current: RecordOf<AppState>) => current.set('messages', saved),
+        getState: (current: RecordOf<AppState>) => current.messages,
         maxUndo:  2
       };
 
-      const { reducer, ctx } = withUndoRedo(reduce, options);
-      let updated;
+      const { reducer, ps } = withUndoRedo(reduce, options);
+      const PS              = ps as UndoState;
+      let updated: RecordOf<AppState>;
 
       updated = reducer(state, { type, message: 'a' });
       updated = reducer(updated, { type, message: 'b' });
@@ -287,10 +313,10 @@ describe('the withUndoRedo plugin', () => {
 
       expect(state.messages.size).toBe(0);
       expect(updated.messages.size).toBe(4);
-      expect(ctx.undo.length).toBe(2);
-      expect(ctx.redo.length).toBe(0);
+      expect(PS.undo.length).toBe(2);
+      expect(PS.redo.length).toBe(0);
 
-      const result   = ctx.undo.map((messages) => messages.toJS());
+      const result   = PS.undo.map((messages: List<string>) => messages.toJS());
       const messages = [
         [ 'a', 'b' ],
         [ 'a', 'b', 'c' ]
@@ -309,11 +335,12 @@ describe('the withUndoRedo plugin', () => {
 
   describe('keeps the correct amount of redoable states', () => {
     it('whole state', () => {
-      const message          = { type: 'add-message', message: 'b' };
-      const { reducer, ctx } = withUndoRedo(reduce, { maxUndo: 2 });
-      const increment        = { type: 'increment-count' };
-      const undo             = { type: 'UNDO' };
-      let updated;
+      const message         = { type: 'add-message', message: 'b' };
+      const { reducer, ps } = withUndoRedo(reduce, { maxUndo: 2 });
+      const increment       = { type: 'increment-count' };
+      const undo            = { type: 'UNDO' };
+      const PS              = ps as UndoState;
+      let updated: RecordOf<AppState>;
 
       updated = reducer(state, increment);   // count === 2
       updated = reducer(updated, increment); // count === 3
@@ -327,8 +354,8 @@ describe('the withUndoRedo plugin', () => {
 
       expect(state.count).toBe(1);
       expect(updated.count).toBe(4);
-      expect(ctx.undo.length).toBe(0);
-      expect(ctx.redo.length).toBe(2);
+      expect(PS.undo.length).toBe(0);
+      expect(PS.redo.length).toBe(2);
 
       const plain = {
         color:    'white',
@@ -344,13 +371,14 @@ describe('the withUndoRedo plugin', () => {
       const undo    = { type: 'UNDO' };
       const type    = 'add-message';
       const options = {
-        setState: (saved, current) => current.set('messages', saved),
-        getState: (current) => current.messages,
+        setState: (saved: List<string>, current: RecordOf<AppState>) => current.set('messages', saved),
+        getState: (current: RecordOf<AppState>) => current.messages,
         maxUndo:  2
       };
 
-      const { reducer, ctx } = withUndoRedo(reduce, options);
-      let updated;
+      const { reducer, ps } = withUndoRedo(reduce, options);
+      const PS              = ps as UndoState;
+      let updated: RecordOf<AppState>;
 
       updated = reducer(state, { type, message: 'a' });
       updated = reducer(updated, { type, message: 'b' });
@@ -364,10 +392,10 @@ describe('the withUndoRedo plugin', () => {
 
       expect(state.messages.size).toBe(0);
       expect(updated.messages.size).toBe(2);
-      expect(ctx.undo.length).toBe(0);
-      expect(ctx.redo.length).toBe(2);
+      expect(PS.undo.length).toBe(0);
+      expect(PS.redo.length).toBe(2);
 
-      const result   = ctx.redo.map((messages) => messages.toJS());
+      const result   = PS.redo.map((messages: List<string>) => messages.toJS());
       const messages = [
         [ 'a', 'b', 'c', 'd' ],
         [ 'a', 'b', 'c' ]
@@ -385,9 +413,11 @@ describe('the withUndoRedo plugin', () => {
   });
 
   it('creates a context provider (1)', () => {
-    const dispatcher = { dispatch: null };
+    const empty: EmptyDispatcher = { dispatch: null };
+
     const undoRedo   = withUndoRedo(reduce);
-    const Component  = createContainer(Container, undoRedo, dispatcher);
+    const Component  = createContainer(Container, undoRedo, empty);
+    const dispatcher = empty as Dispatcher;
 
     const { queryByText } = render(
       <Component initialState={state} />
@@ -405,9 +435,11 @@ describe('the withUndoRedo plugin', () => {
   });
 
   it('creates a context provider (2)', () => {
-    const dispatcher = { dispatch: null };
+    const empty: EmptyDispatcher = { dispatch: null };
+
     const undoRedo   = withUndoRedo(reduce);
-    const Component  = createContainer(Container, undoRedo, dispatcher);
+    const Component  = createContainer(Container, undoRedo, empty);
+    const dispatcher = empty as Dispatcher;
 
     const { queryByText } = render(
       <Component initialState={state} />

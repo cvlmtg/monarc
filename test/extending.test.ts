@@ -1,16 +1,37 @@
 import { createPlugin } from '../src/index';
-import { Record } from 'immutable';
 
 // ---------------------------------------------------------------------
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-function wrapReducer(reduce, ctx) {
-  ctx.actions = [];
+type AppState = {
+  count: number;
+};
 
-  return (state, action) => {
-    const updated = reduce(state, action);
+type LogState = {
+  actions: string[];
+};
 
-    ctx.actions.push(action.type);
+function reduce(state: AppState, action: Action): AppState {
+  switch (action.type) {
+    case 'increment-count':
+      return { count: state.count + 1 };
+
+    default:
+      return state;
+  }
+}
+
+function wrapReducer(
+  reducer: Reducer<AppState, Action>,
+  ps: Partial<LogState>
+): Reducer<AppState, Action> {
+  ps.actions  = [];
+
+  const PS = ps as LogState;
+
+  return (state: AppState, action: Action): AppState => {
+    const updated = reducer(state, action);
+
+    PS.actions.push(action.type);
 
     return updated;
   };
@@ -18,27 +39,13 @@ function wrapReducer(reduce, ctx) {
 
 const [ withLogging ] = createPlugin(wrapReducer);
 
-const reduce = (state, action) => {
-  switch (action.type) {
-    case 'increment-count':
-      return state.set('count', state.count + 1);
-
-    default:
-      return state;
-  }
-};
-
-const State = new Record({
-  count: 1
-});
-
 // ---------------------------------------------------------------------
 
 describe('the withLogging custom plugin', () => {
-  let state;
+  let state: AppState;
 
   beforeEach(() => {
-    state = new State();
+    state = { count: 1 };
   });
 
   it('extends one or more reducers', () => {
@@ -46,23 +53,20 @@ describe('the withLogging custom plugin', () => {
     const one    = () => withLogging([ reduce ]);
     const two    = () => withLogging([ reduce, reduce ]);
 
+    expect(simple).not.toThrow();
     expect(one).not.toThrow();
     expect(two).not.toThrow();
-    expect(simple).not.toThrow();
   });
 
   it('rejects invalid reducers', () => {
     const emptyArr = () => withLogging([]);
-    const wrongObj = () => withLogging({});
-    const noArg    = () => withLogging();
 
     expect(emptyArr).toThrow();
-    expect(wrongObj).toThrow();
-    expect(noArg).toThrow();
   });
 
   it('reduces a state and an action', () => {
-    const { reducer, ctx } = withLogging(reduce);
+    const { reducer, ps } = withLogging(reduce);
+    const PS = ps as LogState;
     let updated;
 
     updated = reducer(state, { type: 'increment-count' });
@@ -70,7 +74,7 @@ describe('the withLogging custom plugin', () => {
 
     expect(state.count).toBe(1);
     expect(updated.count).toBe(2);
-    expect(ctx.actions).toEqual([
+    expect(PS.actions).toEqual([
       'increment-count',
       'whatever'
     ]);

@@ -1,50 +1,45 @@
-/* eslint-disable quote-props, key-spacing */
+/* eslint-disable key-spacing */
 
 module.exports = {
-  'root': true,
-  'parser': '@typescript-eslint/parser',
-  'extends': [
+  root: true,
+  parser: '@typescript-eslint/parser',
+  extends: [
     'eslint:recommended',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-    'plugin:import/typescript',
-    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended'
+    'plugin:react/recommended',
+    'plugin:import/typescript',
+    'plugin:import/warnings',
+    'plugin:import/errors'
   ],
-  'settings': {
-    'react': {
-      'version': 'detect'
+  settings: {
+    react: {
+      version: 'detect'
     }
   },
-  'plugins': [
+  plugins: [
     '@typescript-eslint',
     'react-hooks',
     'import',
     'react'
   ],
-  'env': {
-    'browser': true,
-    'jest': true,
-    'node': true,
-    'es6': true
+  env: {
+    browser: true,
+    jest: true
   },
-  'globals': {
-    'SharedArrayBuffer': 'readonly',
-    'Atomics': 'readonly',
-    'process': 'readonly',
-    'expect': 'readonly'
+  globals: {
+    SharedArrayBuffer: 'readonly',
+    Atomics: 'readonly',
+    process: 'readonly',
+    expect: 'readonly'
   },
-  'parserOptions': {
-    'ecmaFeatures': {
-      'jsx': true
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true
     },
-    'ecmaVersion': 2018,
-    'sourceType': 'module'
+    ecmaVersion: 2018
   },
-  'rules': {
-    '@typescript-eslint/no-explicit-any': 'off',
+  rules: {
     'accessor-pairs': 'error',
     'array-bracket-newline': [
       'error',
@@ -67,8 +62,8 @@ module.exports = {
     'arrow-spacing': [
       'error',
       {
-        'after': true,
-        'before': true
+        after: true,
+        before: true
       }
     ],
     'block-scoped-var': 'error',
@@ -80,16 +75,16 @@ module.exports = {
       'error',
       '1tbs',
       {
-        'allowSingleLine': true
+        allowSingleLine: true
       }
     ],
     'callback-return': 'off',
-    'camelcase': [
+    camelcase: [
       'error',
       {
-        'properties': 'never',
-        'ignoreDestructuring': false,
-        'ignoreImports': false
+        properties: 'never',
+        ignoreDestructuring: false,
+        ignoreImports: false
       }
     ],
     'capitalized-comments': 'off',
@@ -97,19 +92,19 @@ module.exports = {
     'comma-spacing': [
       'error',
       {
-        'after': true,
-        'before': false
+        after: true,
+        before: false
       }
     ],
     'comma-style': [
       'error',
       'last'
     ],
-    'complexity': 'off',
+    complexity: 'off',
     'computed-property-spacing': 'error',
     'consistent-return': 'error',
     'consistent-this': 'error',
-    'curly': [ 'error', 'all' ],
+    curly: [ 'error', 'all' ],
     'default-case': 'error',
     'default-param-last': 'error',
     'dot-location': [
@@ -118,7 +113,7 @@ module.exports = {
     ],
     'dot-notation': 'error',
     'eol-last': 'error',
-    'eqeqeq': 'error',
+    eqeqeq: 'error',
     'func-call-spacing': 'error',
     'func-name-matching': 'error',
     'func-names': 'error',
@@ -126,7 +121,7 @@ module.exports = {
       'error',
       'declaration',
       {
-        'allowArrowFunctions': true
+        allowArrowFunctions: true
       }
     ],
     'function-paren-newline': [
@@ -154,7 +149,7 @@ module.exports = {
     'import/namespace': [
       'error',
       {
-        'allowComputed': true
+        allowComputed: true
       }
     ],
     'import/no-unresolved': [
@@ -169,16 +164,16 @@ module.exports = {
       'error',
       2,
       {
-        'SwitchCase': 1,
-        'MemberExpression': 1,
-        'FunctionDeclaration': {
-          'parameters': 'first'
+        SwitchCase: 1,
+        MemberExpression: 1,
+        FunctionDeclaration: {
+          parameters: 'first'
         },
-        'FunctionExpression': {
-          'parameters': 'first'
+        FunctionExpression: {
+          parameters: 'first'
         },
-        'ArrayExpression': 1,
-        'ObjectExpression': 1
+        ArrayExpression: 1,
+        ObjectExpression: 1
       }
     ],
     'indent-legacy': 'off',
@@ -195,8 +190,8 @@ module.exports = {
     'keyword-spacing': [
       'error',
       {
-        'after': true,
-        'before': true
+        after: true,
+        before: true
       }
     ],
     'line-comment-position': 'off',
@@ -212,15 +207,15 @@ module.exports = {
     'max-len': [
       'error',
       {
-        'code': 120,
-        'tabWidth': 2,
-        'comments': 80,
-        'ignoreUrls': true,
-        'ignoreComments': false,
-        'ignoreStrings': true,
-        'ignoreTemplateLiterals': true,
-        'ignoreRegExpLiterals': true,
-        'ignoreTrailingComments': false
+        code: 120,
+        tabWidth: 2,
+        comments: 80,
+        ignoreUrls: true,
+        ignoreComments: false,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+        ignoreRegExpLiterals: true,
+        ignoreTrailingComments: false
       }
     ],
     'max-lines': 'off',
@@ -251,7 +246,7 @@ module.exports = {
     'no-bitwise': [
       'error',
       {
-        'int32Hint': true
+        int32Hint: true
       }
     ],
     'no-buffer-constructor': 'error',
@@ -275,20 +270,20 @@ module.exports = {
       'error',
       'all',
       {
-        'conditionalAssign': false,
-        'returnAssign': true,
-        'nestedBinaryExpressions': false,
-        'ignoreJSX': 'all',
-        'enforceForArrowConditionals': false,
-        'enforceForSequenceExpressions': false,
-        'enforceForNewInMemberExpressions': false
+        conditionalAssign: false,
+        returnAssign: true,
+        nestedBinaryExpressions: false,
+        ignoreJSX: 'all',
+        enforceForArrowConditionals: false,
+        enforceForSequenceExpressions: false,
+        enforceForNewInMemberExpressions: false
       }
     ],
     'no-floating-decimal': 'error',
     'no-implicit-coercion': [
       'error',
       {
-        'boolean': false
+        boolean: false
       }
     ],
     'no-implicit-globals': 'error',
@@ -309,11 +304,11 @@ module.exports = {
     'no-multi-spaces': [
       'error',
       {
-        'ignoreEOLComments': true,
-        'exceptions': {
-          'AssignmentExpression': true,
-          'VariableDeclarator': true,
-          'Property': true
+        ignoreEOLComments: true,
+        exceptions: {
+          AssignmentExpression: true,
+          VariableDeclarator: true,
+          Property: true
         }
       }
     ],
@@ -321,9 +316,9 @@ module.exports = {
     'no-multiple-empty-lines': [
       'error',
       {
-        'maxEOF': 0,
-        'maxBOF': 0,
-        'max': 1
+        maxEOF: 0,
+        maxBOF: 0,
+        max: 1
       }
     ],
     'no-native-reassign': 'error',
@@ -361,20 +356,23 @@ module.exports = {
     'no-ternary': 'off',
     'no-throw-literal': 'error',
     'no-trailing-spaces': 'error',
-    'no-undef': 'error',
+    'no-undef': 'off',
     'no-undef-init': 'error',
     'no-undefined': 'off',
     'no-underscore-dangle': 'off',
     'no-unmodified-loop-condition': 'error',
     'no-unneeded-ternary': 'error',
     'no-unused-expressions': 'error',
-    'no-unused-vars': [
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': [
       'error',
       {
-        'ignoreRestSiblings': true
+        ignoreRestSiblings: true
       }
     ],
-    'no-use-before-define': 'error',
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': 'error',
     'no-useless-call': 'error',
     'no-useless-computed-key': 'error',
     'no-useless-concat': 'error',
@@ -386,8 +384,8 @@ module.exports = {
     'no-warning-comments': [
       'warn',
       {
-        'location': 'anywhere',
-        'terms': [
+        location: 'anywhere',
+        terms: [
           'fixme',
           'todo'
         ]
@@ -404,8 +402,8 @@ module.exports = {
     'one-var': [
       'error',
       {
-        'uninitialized': 'never',
-        'initialized': 'never'
+        uninitialized: 'never',
+        initialized: 'never'
       }
     ],
     'one-var-declaration-per-line': [
@@ -442,21 +440,14 @@ module.exports = {
     'quotes': [
       'error',
       'single',
-      { 'avoidEscape': true }
+      { avoidEscape: true }
     ],
     'radix': 'error',
     'react/jsx-props-no-spreading': 'error',
     'react/no-danger': 'error',
     'react/no-unused-prop-types': 'error',
     'react/no-unused-state': 'error',
-    'react/prop-types': [
-      'error',
-      {
-        'ignore': [
-          'children'
-        ]
-      }
-    ],
+    'react/prop-types': 'off',
     'react/sort-comp': [
       'warn',
       {

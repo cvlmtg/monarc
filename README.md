@@ -26,9 +26,9 @@ yarn add monarc
 
 ## Motivation
 
-This project was born as an alternative to Facebook's Flux state management solution. My company's React applications are based on Flux, which uses a deprecated React method that will stop working with React 17. Since Flux seems no longer actively maintained, it is probably wise to start thinking about an escape path before the release of the next major version of React.
+This project was born as an alternative to Facebook's Flux state management solution. My company's React applications were based on Flux, which uses a deprecated React method that will stop working sooner or later. Since Flux seems no longer actively maintained, it is probably wise to start thinking about an escape path before it's too late.
 
-MONARC has already successfully replaced Flux on these applications and is being used in the new ones.
+MONARC has already successfully replaced Flux and is being used in production on these applications and on all the new ones.
 
 ## Documentation
 
