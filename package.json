@@ -43,7 +43,7 @@
     "redux"
   ],
   "peerDependencies": {
-    "react": ">=17.8"
+    "react": ">=17.0"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.6",
