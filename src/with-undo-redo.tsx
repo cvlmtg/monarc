@@ -12,7 +12,7 @@ type UndoOpts = {
   maxUndo: number;
 };
 
-type UndoState = {
+export type UndoState = {
   prev: string | null;
   undo: Array<any>;
   redo: Array<any>;
