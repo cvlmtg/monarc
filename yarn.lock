@@ -1117,6 +1117,13 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@redux-devtools/serialize@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.3.0.tgz#b194e2f6c2ac064c83d6e28f5b9584cbc9f25633"
+  integrity sha512-CcpqmqhhmJbiy1hm80+BkRI4AoFimC+QS/K6h49qqwAT/+P3d+EVIVHH5G3q5Xq8m7+crcu4GaqIBbTyrXr7Bw==
+  dependencies:
+    jsan "^3.1.13"
+
 "@rollup/plugin-babel@^5.1.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-5.3.0.tgz#9cb1c5146ddd6a4968ad96f209c50c62f92f9879"
@@ -1305,6 +1312,11 @@
   dependencies:
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
+
+"@types/jsan@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@types/jsan/-/jsan-3.1.0.tgz#128fdb14a102134ede764b11682e795d1b380c43"
+  integrity sha512-V5wfm0++TqM92D0ZkAhl9MDQHPTi88fXhMNVin5LV/Y3RnuU/FUv6wML4Vt/amZmPN9WaFTmDhKW+h58kAFmIg==
 
 "@types/json-schema@^7.0.3":
   version "7.0.7"
@@ -4232,6 +4244,11 @@ js-yaml@^3.13.1:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+jsan@^3.1.13:
+  version "3.1.13"
+  resolved "https://registry.yarnpkg.com/jsan/-/jsan-3.1.13.tgz#4de8c7bf8d1cfcd020c313d438f930cec4b91d86"
+  integrity sha512-9kGpCsGHifmw6oJet+y8HaCl14y7qgAsxVdV3pCHDySNR3BfDC30zgkssd7x5LRVAT22dnpbe9JdzzmXZnq9/g==
+
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
@@ -5297,6 +5314,11 @@ rechoir@^0.6.2:
   integrity sha1-hSBLVNuoLVdC4oyWdW70OvUOM4Q=
   dependencies:
     resolve "^1.1.6"
+
+redux-devtools-extension@^2.13.9:
+  version "2.13.9"
+  resolved "https://registry.yarnpkg.com/redux-devtools-extension/-/redux-devtools-extension-2.13.9.tgz#6b764e8028b507adcb75a1cae790f71e6be08ae7"
+  integrity sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A==
 
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
