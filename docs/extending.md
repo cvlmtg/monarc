@@ -2,14 +2,14 @@
 
 MONARC can be extended with your own plugins, in the same manner the built-in `withUndoRedo` and `withAutoSave` extend the core functionality.
 
-A plugin consists of two parts. The first one extends the store's reducer, the second one (optional) is a React component that will be rendered to provide a new context for the application. To create this component we will pass a React hook to calculate the value of the context.
+A plugin consists of two parts: the first one extends the store's reducer, the second one is an (optional) React component that will be rendered to provide a new context for the application.
 
 A plugin is created with the `createPlugin` function.
 
 ## Syntax
 
 ```js
-const [ plugin, hook, context ] = createPlugin(wrapReducer[, defaults]);
+const [ plugin ] = createPlugin(wrapReducer[, defaults]);
 const [ plugin, hook, context ] = createPlugin(wrapReducer, contextValue[, defaults]);
 ```
 
@@ -21,7 +21,7 @@ const [ plugin, hook, context ] = createPlugin(wrapReducer, contextValue[, defau
 
 * `contextValue` (optional)
 
-  This is an optional function (or React hook, for e.g. using `useMemo`) that is called to calculate the value of the plugin context on each render.
+  This is an optional function (or React hook) that is called to calculate the value of the plugin context on each render.
 
 * `defaults` (optional)
 
@@ -29,11 +29,11 @@ const [ plugin, hook, context ] = createPlugin(wrapReducer, contextValue[, defau
 
 ### Return value
 
-An array containing our plugin, plus, if we supplied the `contextValue` hook, another hook that may be used by functional components to read the plugin context value (like the built-in `useAutoSave` or `useUndoRedo` hooks) and the plugin context for class based components (please refer to the [React documentation](https://en.reactjs.org/docs/context.html#classcontexttype) for more information).
+An array containing our plugin and, if we supplied the `contextValue` hook, an hook that may be used by functional components to read the plugin context value (like the built-in `useAutoSave` or `useUndoRedo` hooks), plus the plugin's context for class based components (please refer to the [React documentation](https://en.reactjs.org/docs/context.html#classcontexttype) for more information).
 
 ## A simple example
 
-Let's suppose we want to collect some data to analyze how our users uses the application. We could log certain events depending on the actions being fired or its parameters. In this case we don't need to add a new context for the application, so we'll build just the wrapper for the reducer.
+Let's suppose we want to collect some data to analyze how our users uses the application. We could log certain events depending on the actions being fired or their parameters. In this case we don't need to add a new context for the application, so we'll build just the wrapper for the reducer.
 
 *with-analytics.js*
 
@@ -55,7 +55,7 @@ Let's suppose we want to collect some data to analyze how our users uses the app
 15  }
 ```
 
-The `wrapReducer` function receives a reducer and the options we pass when invoking our `withAnalytics` plugin. Then it returns another reducer which will do all the logging (*line 4*). Like any other reducer, it must return the new state, so we can just invoke the child reducer (*line 13*).
+The `wrapReducer` function receives a reducer and the options we pass when invoking our `withAnalytics` plugin (already merged with their default values, if any). Then it returns another reducer which will do all the logging (*line 4*). Like any other reducer, it must return the new state, so we can just invoke the child reducer (*line 13*).
 
 Now we need to write our plugin function.
 
@@ -84,11 +84,11 @@ We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*
  6  const reducer = withAnalytics(counterReducer, options);
  7
  8  function CounterContainer() {
- 9    const store = useStore();
+ 9    const { user } = useStore();
 10
 11    return (
 12      <div>
-13        <Header user={store.user} />
+13        <Header user={user} />
 14        <Application />
 15      </div>
 16    );
@@ -99,7 +99,7 @@ We just need to call `createPlugin` passing our `wrapReducer` function (*line 7*
 
 ## A full fledged plugin
 
-Suppose that now we want to display the number of actions logged. We need to create a context provider, so that another component of our application can read it and display it in the right place. We don't need to manually create it, we just need a hook that will return the correct value.
+Suppose that now we want to display the number of actions logged. We need to create a context provider, so that another component of our application can read it and display it in the right place. We don't need to manually create it, we just need a function or React hook that will return the correct value.
 
 ```jsx
  1  function contextValue(ps) {

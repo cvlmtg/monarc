@@ -93,7 +93,7 @@ We can use both of them or just one of them as we wish. Each of these functions 
 
 ## withUndoRedo
 
-Using this function enables undo / redo management. We will be able to save our application's state changes (up to a maximum value) and undo / redo to a previous state. There are also some behaviours which can be controlled by adding some [flags](#undo--redo-flags) to our actions.
+This plugin enables undo / redo management. We will be able to save our application's state changes (up to a maximum value) and undo / redo to a previous state. There are also some behaviours which can be controlled by adding some [flags](#undo--redo-flags) to our actions.
 
 ### Undo / redo options
 
@@ -165,7 +165,7 @@ We can have a more fine-grained control over the undo / redo behaviour by adding
 
 ## withAutoSave
 
-Using this function enables the auto-save feature. Whenever the state changes, a timer will be triggered. When the timer expires the current state of the application will be saved. We can also choose to save the state *before* the change.
+This plugin enables the auto-save feature. Whenever the state changes, a timer will be started. When the timer expires, the current state of the application will be saved. We can also choose to save the state *before* the change.
 
 The save will be immediately triggered on unmount and on the [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) event too.
 
@@ -187,7 +187,7 @@ This function accepts the following options:
 
 - **delay** (optional)
 
-  The number of milliseconds after which the `onSave` function is called. You can set it to 0, which basically means to save immediately after the render of the new state. The default is 5000 ms.
+  The number of milliseconds after which the `onSave` function is called. You can set it to 0, which basically means to save immediately after the render of the new state. The default is 5 seconds.
 
 - **onUpdate** (optional)
 
@@ -206,6 +206,30 @@ This function accepts the following options:
   ```typescript
   onBeforeUpdate: (previous: any, updated: any, action: Action, isTimerActive: boolean) => boolean;
   ```
+
+## withDevTools
+
+This plugin connects your application to the [Redux DevTools](https://github.com/reduxjs/redux-devtools) extension.
+
+**NOTE:** The extension currently on the Chrome Web Store is outdated and has a few bugs. Please install version 2.17.0 or later following the installation instructions described on [Github](https://github.com/reduxjs/redux-devtools/tree/master/extension).
+
+If you use [immutable.js](https://immutable-js.github.io/immutable-js/) for your application state, remember to pass the correct options to the Redux DevTools, i.e.:
+
+```js
+import { State } from './my-app-state-record';
+import Immutable from 'immutable';
+
+if (process.env.NODE_ENV !== 'production') {
+  const options = {
+    serialize: {
+      immutable: Immutable,
+      refs:      [ State ]
+    }
+  };
+
+  reducers = withDevTools(reducers, options);
+}
+```
 
 ## Hooks
 
