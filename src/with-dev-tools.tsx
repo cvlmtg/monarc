@@ -53,6 +53,7 @@ function wrapReducer(
       updated = reduce(state, action);
 
       _ps.send(action, updated);
+
       return updated;
     }
 
@@ -116,8 +117,8 @@ function useValue(ps: Partial<DevState>, options: ImmutableOpts): void {
 
     const unsubscribe = devtools.subscribe((message: Message) => {
       if (message.type === 'DISPATCH') {
-        const state   = parse(message.state);
-        const action  = {
+        const state  = parse(message.state);
+        const action = {
           type:    TIME_TRAVEL,
           payload: message.payload,
           state
