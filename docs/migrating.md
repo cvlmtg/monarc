@@ -1,8 +1,8 @@
 # Migrating from Flux
 
-One of the goals of MONARC was to ease the migration from Flux to a more modern and maintained solution to manage an application state. That means you should be able to migrate your existing applications without too much effort or extensive rewrites.
+One of the goals of MONARC is to ease the migration from Flux to a more modern and maintained solution to manage an application state. That means you should be able to migrate your existing applications with just a couple of changes.
 
-These instructions should help you migrating from a Flux application using the [ReduceStore / Container](https://facebook.github.io/flux/docs/flux-utils) pattern with actions dispatched through Flux's [Dispatcher](https://facebook.github.io/flux/docs/dispatcher).
+These instructions will help you migrating from a Flux application using the [ReduceStore / Container](https://facebook.github.io/flux/docs/flux-utils) pattern with actions dispatched through Flux's [Dispatcher](https://facebook.github.io/flux/docs/dispatcher).
 
 ## Dispatcher
 
@@ -25,7 +25,7 @@ The `dispatch` attribute will later be replaced by the real dispatch function.
 
 **CAVEATS**
 
-- Because of how React hooks work, our fake `dispatch` method will remain *null* until the first render. If your application fires some actions before that, you'll need some refactoring (but usually a spinner or a progress bar will be enough).
+- Because of how React hooks work, our fake `dispatch` method will remain *null* until the first render. If your application fires some actions before that, you'll need some refactoring.
 - The only method supported is `dispatch`. Other methods from Flux's dispatcher are not supported (e.g. `isDispatching`), but if you have followed the `ReduceStore` / `Container` pattern, you have probably never used them.
 
 ## Action creators

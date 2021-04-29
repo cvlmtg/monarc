@@ -6,7 +6,7 @@ MONARC is a store intended for [React](https://reactjs.org/) applications, based
 
 It can be extended with your own plugins, with a couple included to provide two advanced features: **undo** / **redo** management and **auto-save**. Both of these features can be enabled on demand.
 
-It also provides some features to help migrating applications using the [Flux](https://facebook.github.io/flux/) `ReduceStore` / `Container` pattern, so you won't have to rewrite your application from scratch.
+MONARC also provides some features to help migrating applications using the [Flux](https://facebook.github.io/flux/) `ReduceStore` / `Container` pattern, so you won't have to rewrite your application from scratch.
 
 [![npm version](https://img.shields.io/npm/v/monarc.svg?style=flat-square)](https://www.npmjs.com/package/monarc)
 [![npm downloads](https://img.shields.io/npm/dm/monarc.svg?style=flat-square)](https://www.npmjs.com/package/monarc)
@@ -26,9 +26,9 @@ yarn add monarc
 
 ## Motivation
 
-This project was born as an alternative to Facebook's Flux state management solution. My company's React applications were based on Flux, which uses a deprecated React method that will stop working sooner or later. Since Flux seems no longer actively maintained, it is probably wise to start thinking about an escape path before it's too late.
+This project was born as an alternative to Facebook's Flux state management. My company's React applications were based on Flux, which uses a deprecated React method that will stop working sooner or later. Since Flux seems no longer actively maintained, it is probably wise to start thinking about an escape path before it's too late.
 
-MONARC has already successfully replaced Flux and is being used in production on these applications and on all the new ones.
+MONARC has already successfully replaced Flux and is being used in production on old and new applications.
 
 ## Documentation
 
