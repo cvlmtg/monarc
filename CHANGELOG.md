@@ -1,3 +1,13 @@
+## [3.0.0-beta.1] - 2021-04-29
+
+### Added
+
+- Added a new plugin to connect to the Redux DevTools.
+
+### Changed
+
+- Minor tweaks to the documentation.
+
 ## [3.0.0-beta.0] - 2021-04-27
 
 ### Changed
