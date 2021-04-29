@@ -4,7 +4,7 @@ MONARC's Obviously Not A Redux Clone.
 
 MONARC is a store intended for [React](https://reactjs.org/) applications, based on the new [Context](https://en.reactjs.org/docs/context.html) API and [useContext / useReducer](https://en.reactjs.org/docs/hooks-reference.html#usecontext) hooks.
 
-It can be extended with your own plugins, with a couple included to provide two advanced features: **undo** / **redo** management and **auto-save**. Both of these features can be enabled on demand.
+It can be extended with your own plugins, with a couple included to provide two advanced features: **undo** / **redo** management and **auto-save**. There is also a plugin to connect your application to the [Redux DevTools](https://github.com/reduxjs/redux-devtools). All of these features can be enabled on demand.
 
 MONARC also provides some features to help migrating applications using the [Flux](https://facebook.github.io/flux/) `ReduceStore` / `Container` pattern, so you won't have to rewrite your application from scratch.
 
