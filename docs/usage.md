@@ -209,15 +209,16 @@ This function accepts the following options:
 
 ## withDevTools
 
-This plugin connects your application to the [Redux DevTools](https://github.com/reduxjs/redux-devtools) extension.
+This plugin connects your application to the [Redux DevTools](https://github.com/reduxjs/redux-devtools) extension. Follow the instructions described on [Github](https://github.com/reduxjs/redux-devtools/blob/master/extension/README.md) to install the extension for your browser.
 
-**NOTE:** The extension currently on the Chrome Web Store is outdated and has a few bugs. Please install version 2.17.0 or later following the installation instructions described on [Github](https://github.com/reduxjs/redux-devtools/tree/master/extension).
-
-If you use [immutable.js](https://immutable-js.github.io/immutable-js/) for your application state, remember to pass the correct options to the Redux DevTools, i.e.:
+If you use [immutable.js](https://immutable-js.github.io/immutable-js/) for your application state, remember to pass the correct options to the Redux DevTools, for example:
 
 ```js
 import { State } from './my-app-state-record';
+import reducer from './my-app-reducer';
 import Immutable from 'immutable';
+
+let reducers = [ reducer ];
 
 if (process.env.NODE_ENV !== 'production') {
   const options = {
@@ -230,6 +231,8 @@ if (process.env.NODE_ENV !== 'production') {
   reducers = withDevTools(reducers, options);
 }
 ```
+
+Options are described [here](https://github.com/reduxjs/redux-devtools/blob/master/extension/docs/API/Arguments.md).
 
 ## Hooks
 
