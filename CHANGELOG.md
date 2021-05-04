@@ -1,3 +1,16 @@
+## [3.0.0] - 2021-05-05
+
+### Added
+
+- Added a new plugin to connect to the Redux DevTools.
+
+### Changed
+
+- Minor tweaks to the documentation.
+- Completely overhauled typescript's types. Hopefully they are much better now.
+- Updated various dependencies, like typescript and tslib.
+- Converted tests from javascript to typescript.
+
 ## [3.0.0-beta.1] - 2021-04-29
 
 ### Added
