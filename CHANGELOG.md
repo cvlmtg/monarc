@@ -1,3 +1,9 @@
+## [3.0.1] - 2021-06-14
+
+### Changed
+
+- Update dependencies to fix dependabot alerts
+
 ## [3.0.0] - 2021-05-05
 
 ### Added
