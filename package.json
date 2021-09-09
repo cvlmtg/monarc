@@ -20,12 +20,14 @@
     "node": ">=10"
   },
   "scripts": {
+    "analyze": "size-limit --why",
+    "build": "dts build",
     "clean": "rm -rf dist",
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
     "lint": "eslint --ext .tsx,.jsx,.ts,.js src/ test/",
-    "prepare": "tsdx build && husky install"
+    "prepare": "dts build",
+    "size": "size-limit",
+    "start": "dts watch",
+    "test": "dts test --passWithNoTests"
   },
   "keywords": [
     "react",
@@ -49,10 +51,12 @@
     "@testing-library/react": "^12.0.0",
     "@types/jest": "^27.0.1",
     "@types/jsan": "^3.1.2",
+    "@size-limit/preset-small-lib": "^5.0.3",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",
+    "dts-cli": "^0.17.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-react": "^7.25.1",
@@ -62,7 +66,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "redux-devtools-extension": "^2.13.9",
-    "tsdx": "^0.14.1",
+    "size-limit": "^5.0.3",
     "tslib": "^2.3.1",
     "typescript": "^4.4.2"
   },
@@ -70,5 +74,15 @@
     "@redux-devtools/serialize": "^0.3.0",
     "jsan": "^3.1.13",
     "tiny-invariant": "^1.1.0"
-  }
+  },
+ "size-limit": [
+    {
+      "path": "dist/monarc.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/monarc.esm.js",
+      "limit": "10 KB"
+    }
+  ]
 }
