@@ -22,7 +22,7 @@ type SaveOpts = {
 
 type SaveState = {
   state: unknown | null;
-  timer: ReturnType<typeof setTimeout> | null;
+  timer: any | null;
   render: () => void;
 };
 
