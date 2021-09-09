@@ -22,7 +22,7 @@ type SaveOpts = {
 
 type SaveState = {
   state: unknown | null;
-  timer: number | null;
+  timer: any | null;
   render: () => void;
 };
 

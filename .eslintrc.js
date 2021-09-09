@@ -8,9 +8,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
     'plugin:react/recommended',
-    'plugin:import/typescript',
-    'plugin:import/warnings',
-    'plugin:import/errors'
+    'plugin:import/recommended',
+    'plugin:import/typescript'
   ],
   settings: {
     react: {
@@ -160,7 +159,7 @@ module.exports = {
       }
     ],
     'import/order': 0,
-    'indent': [
+    indent: [
       'error',
       2,
       {
@@ -437,12 +436,12 @@ module.exports = {
       'error',
       'as-needed'
     ],
-    'quotes': [
+    quotes: [
       'error',
       'single',
       { avoidEscape: true }
     ],
-    'radix': 'error',
+    radix: 'error',
     'react/jsx-props-no-spreading': 'error',
     'react/no-danger': 'error',
     'react/no-unused-prop-types': 'error',
@@ -489,7 +488,7 @@ module.exports = {
       'error',
       'never'
     ],
-    'semi': [
+    semi: [
       'error',
       'always'
     ],
@@ -515,7 +514,7 @@ module.exports = {
       'error',
       'always'
     ],
-    'strict': 'error',
+    strict: 'error',
     'switch-colon-spacing': 'error',
     'symbol-description': 'error',
     'template-curly-spacing': [
@@ -532,7 +531,7 @@ module.exports = {
     'wrap-iife': 'error',
     'wrap-regex': 'error',
     'yield-star-spacing': 'error',
-    'yoda': [
+    yoda: [
       'error',
       'never'
     ]

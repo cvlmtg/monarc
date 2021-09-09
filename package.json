@@ -1,6 +1,6 @@
 {
   "name": "monarc",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
   "homepage": "https://cvlmtg.github.io/monarc/",
@@ -20,12 +20,14 @@
     "node": ">=10"
   },
   "scripts": {
+    "analyze": "size-limit --why",
+    "build": "dts build",
     "clean": "rm -rf dist",
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
     "lint": "eslint --ext .tsx,.jsx,.ts,.js src/ test/",
-    "prepare": "tsdx build && husky install"
+    "prepare": "dts build",
+    "size": "size-limit",
+    "start": "dts watch",
+    "test": "dts test --passWithNoTests"
   },
   "keywords": [
     "react",
@@ -46,29 +48,41 @@
     "react": ">=17.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.2.7",
-    "@types/jest": "^26.0.23",
-    "@types/jsan": "^3.1.0",
-    "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.7",
-    "@typescript-eslint/eslint-plugin": "^4.26.1",
-    "@typescript-eslint/parser": "^4.26.1",
-    "eslint": "^7.28.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-react": "^7.24.0",
+    "@testing-library/react": "^12.0.0",
+    "@types/jest": "^27.0.1",
+    "@types/jsan": "^3.1.2",
+    "@size-limit/preset-small-lib": "^5.0.3",
+    "@types/react": "^17.0.20",
+    "@types/react-dom": "^17.0.9",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
+    "dts-cli": "^0.17.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-react": "^7.25.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^6.0.0",
-    "immutable": "^4.0.0-rc.12",
+    "husky": "^7.0.2",
+    "immutable": "^4.0.0-rc.14",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "redux-devtools-extension": "^2.13.9",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.3.0",
-    "typescript": "^4.3.2"
+    "size-limit": "^5.0.3",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.2"
   },
   "dependencies": {
     "@redux-devtools/serialize": "^0.3.0",
     "jsan": "^3.1.13",
     "tiny-invariant": "^1.1.0"
-  }
+  },
+ "size-limit": [
+    {
+      "path": "dist/monarc.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/monarc.esm.js",
+      "limit": "10 KB"
+    }
+  ]
 }
