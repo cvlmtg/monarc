@@ -8,9 +8,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
     'plugin:react/recommended',
-    'plugin:import/typescript',
-    'plugin:import/warnings',
-    'plugin:import/errors'
+    'plugin:import/recommended',
+    'plugin:import/typescript'
   ],
   settings: {
     react: {
