@@ -13,8 +13,7 @@
   "typings": "dist/index.d.ts",
   "module": "dist/monarc.esm.js",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=10"
