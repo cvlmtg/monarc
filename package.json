@@ -1,6 +1,6 @@
 {
   "name": "monarc",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
   "homepage": "https://cvlmtg.github.io/monarc/",
@@ -13,8 +13,7 @@
   "typings": "dist/index.d.ts",
   "module": "dist/monarc.esm.js",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=10"
@@ -48,7 +47,7 @@
     "react": ">=17.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^12.0.0",
+    "@testing-library/react": "^12.1.0",
     "@types/jest": "^27.0.1",
     "@types/jsan": "^3.1.2",
     "@size-limit/preset-small-lib": "^5.0.3",
@@ -68,7 +67,7 @@
     "redux-devtools-extension": "^2.13.9",
     "size-limit": "^5.0.3",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.3"
   },
   "dependencies": {
     "@redux-devtools/serialize": "^0.3.0",

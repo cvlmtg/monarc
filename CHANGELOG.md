@@ -1,9 +1,15 @@
+## [3.1.1] - 2021-09-11
+
+### Changed
+
+- don't include source files in the NPM package
+- Updated dependencies
+
 ## [3.1.0] - 2021-09-09
 
 ### Changed
 
-- Switched from tsdx to dts-cli, because the former is
-no longer actively maintained
+- Switched from tsdx to dts-cli, because the former is no longer actively maintained
 - Updated dependencies
 
 ## [3.0.1] - 2021-06-14
