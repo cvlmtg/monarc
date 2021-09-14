@@ -34,7 +34,7 @@ MONARC has already successfully replaced Flux and is being used in production on
 
 * [Usage](docs/usage.md)
   * [Reducer](docs/usage.md#reducer)
-  * [Undo / Redo](docs/usage.md#ithundoredo)
+  * [Undo / Redo](docs/usage.md#withundoredo)
   * [Auto-save](docs/usage.md#withautosave)
   * [Container](docs/usage.md#container)
   * [Hooks](docs/usage.md#hooks)
