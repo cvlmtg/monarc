@@ -1,4 +1,5 @@
 import { withAutoSave, withUndoRedo } from '../src/index';
+import type { Action, PluginState } from '../src/typings';
 import { RecordOf, Record } from 'immutable';
 
 // ---------------------------------------------------------------------

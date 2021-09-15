@@ -1,6 +1,9 @@
 import { createPlugin } from './create-plugin';
 import { Context, useMemo } from 'react';
 import invariant from 'tiny-invariant';
+import type {
+  Action, Reducer, UsePlugin, WithPlugin
+} from './typings';
 
 // ---------------------------------------------------------------------
 
@@ -158,7 +161,7 @@ const defaults = {
 // ---------------------------------------------------------------------
 
 const [ withUndoRedo, useUndoRedo, undoContext ]
-  : [ WithPlugin<any, UndoOpts>, UsePlugin<UndoCtx>, Context<UndoCtx> ]
+  : [ WithPlugin<any, UndoOpts, Action>, UsePlugin<UndoCtx>, Context<UndoCtx> ]
   = createPlugin(wrapReducer, useValue, defaults);
 
 export { withUndoRedo, useUndoRedo, undoContext };

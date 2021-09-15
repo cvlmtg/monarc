@@ -1,3 +1,4 @@
+import type { Action, AnyReducer, EmptyDispatcher } from './typings';
 import { splitReducer } from './create-plugin';
 import { storeContext } from './context';
 import React, {
@@ -14,10 +15,10 @@ type Container<S> = FunctionComponent<{
 
 // ---------------------------------------------------------------------
 
-export function createContainer<S>(
+export function createContainer<S, A extends Action>(
   Component: ComponentType<{ store: S }>,
-  anyReducer: AnyReducer<S>,
-  dispatcher?: EmptyDispatcher
+  anyReducer: AnyReducer<S, A>,
+  dispatcher?: EmptyDispatcher<A>
 ): Container<S> {
   const [ reducer, Provider ] = splitReducer(anyReducer);
 

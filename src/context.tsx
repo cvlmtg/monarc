@@ -1,4 +1,5 @@
 import { useContext, createContext } from 'react';
+import type { Action, Dispatch } from './typings';
 
 // ---------------------------------------------------------------------
 
