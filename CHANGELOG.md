@@ -1,8 +1,14 @@
+## [3.2.0] - 2021-09-15
+
+### Fixed
+
+- Fixed type declarations
+
 ## [3.1.1] - 2021-09-11
 
 ### Changed
 
-- don't include source files in the NPM package
+- Don't include source files in the NPM package
 - Updated dependencies
 
 ## [3.1.0] - 2021-09-09
