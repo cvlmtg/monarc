@@ -1,4 +1,8 @@
 import invariant from 'tiny-invariant';
+import type {
+  Action, AnyReducer, Reducer, ReducerProvider, WrapReducer,
+  UseValue, UsePlugin, WithPlugin
+} from './typings';
 import React, {
   ComponentType, Fragment, FunctionComponent,
   createContext, useContext, Context
@@ -7,12 +11,12 @@ import React, {
 // ---------------------------------------------------------------------
 
 export function splitReducer<S, A extends Action>(
-  anyReducer: AnyReducer<S>
+  anyReducer: AnyReducer<S, A>
 ): [
   Reducer<S, A>,
   ComponentType
 ] {
-  const reducerProvider = anyReducer as ReducerProvider<S>;
+  const reducerProvider = anyReducer as ReducerProvider<S, A>;
   const reducers        = anyReducer as Array<Reducer<S, A>>;
 
   if (typeof reducerProvider.reducer !== 'undefined') {
@@ -45,18 +49,18 @@ export function splitReducer<S, A extends Action>(
 // ---------------------------------------------------------------------
 
 function full<S, O, C, A extends Action>(
-  wrapReducer: WrapReducer<S, O>,
+  wrapReducer: WrapReducer<S, O, A>,
   useValue: UseValue<O>,
   defaults?: Partial<O>
 ): [
-  WithPlugin<S, O>,
+  WithPlugin<S, O, A>,
   UsePlugin<C>,
   Context<C>
 ] {
   const initContext = createContext<unknown>(null);
   const useInit     = () => useContext(initContext);
 
-  const withPlugin = (anyReducer: AnyReducer<S>, options?: Partial<O>) => {
+  const withPlugin = (anyReducer: AnyReducer<S, A>, options?: Partial<O>) => {
     const [ reducer, Provider ] = splitReducer<S, A>(anyReducer);
 
     const ps      = {};
@@ -89,12 +93,12 @@ function full<S, O, C, A extends Action>(
 }
 
 function simple<S, O, A extends Action>(
-  wrapReducer: WrapReducer<S, O>,
+  wrapReducer: WrapReducer<S, O, A>,
   defaults?: Partial<O>
 ): [
-  WithPlugin<S, O>
+  WithPlugin<S, O, A>
 ] {
-  const withPlugin = (anyReducer: AnyReducer<S>, options?: Partial<O>) => {
+  const withPlugin = (anyReducer: AnyReducer<S, A>, options?: Partial<O>) => {
     const [ reducer, Provider ] = splitReducer<S, A>(anyReducer);
 
     const ps      = {};
@@ -111,33 +115,33 @@ function simple<S, O, A extends Action>(
   return [ withPlugin ];
 }
 
-export function createPlugin<S, O>(
-  wrapReducer: WrapReducer<S, O>,
+export function createPlugin<S, O, A extends Action>(
+  wrapReducer: WrapReducer<S, O, A>,
   defaults?: Partial<O>
 ): [
-  WithPlugin<S, O>
+  WithPlugin<S, O, A>
 ];
 
-export function createPlugin<S, O, C>(
-  wrapReducer: WrapReducer<S, O>,
+export function createPlugin<S, O, C, A extends Action>(
+  wrapReducer: WrapReducer<S, O, A>,
   useValue: UseValue<O>,
   defaults?: Partial<O>
 ): [
-  WithPlugin<S, O>,
+  WithPlugin<S, O, A>,
   UsePlugin<C>,
   Context<C>
 ];
 
-export function createPlugin<S, O, C>(
-  wrapReducer: WrapReducer<S, O>,
+export function createPlugin<S, O, C, A extends Action>(
+  wrapReducer: WrapReducer<S, O, A>,
   useValue?: UseValue<O> | Partial<O>,
   defaults?: Partial<O>
 ): [
-  WithPlugin<S, O>,
+  WithPlugin<S, O, A>,
   UsePlugin<C>,
   Context<C>
 ] | [
-  WithPlugin<S, O>
+  WithPlugin<S, O, A>
 ] {
   if (typeof useValue === 'function') {
     return full(wrapReducer, useValue, defaults);

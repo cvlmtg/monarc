@@ -1,6 +1,9 @@
 import { createContainer, withUndoRedo, useDispatch } from '../src/index';
 import { fireEvent, render, act } from '@testing-library/react';
 import React, { ComponentType, useCallback } from 'react';
+import type {
+  Action, Dispatcher, EmptyDispatcher
+} from '../src/typings';
 
 // ---------------------------------------------------------------------
 
@@ -73,10 +76,10 @@ describe('the createContainer constructor', () => {
   });
 
   it('create a flux dispatcher', () => {
-    const empty: EmptyDispatcher = { dispatch: null };
+    const empty: EmptyDispatcher<Action> = { dispatch: null };
 
     const Container  = createContainer(TestComponent, reduce, empty);
-    const dispatcher = empty as Dispatcher;
+    const dispatcher = empty as Dispatcher<Action>;
 
     const { queryByText } = render(
       <Container initialState={state} />

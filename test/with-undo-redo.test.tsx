@@ -3,18 +3,11 @@ import type { UndoState } from '../src/with-undo-redo';
 import { render, act } from '@testing-library/react';
 import { RecordOf, Record, List } from 'immutable';
 import React from 'react';
+import type {
+  Action, Dispatcher, EmptyDispatcher
+} from '../src/typings';
 
 // ---------------------------------------------------------------------
-
-interface AppAction extends Action {
-  message: string;
-  color: string;
-  index: number;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
 
 type Shape = {
   x: number;
@@ -30,7 +23,7 @@ type AppState = {
   count: number;
 };
 
-const reduce = (state: RecordOf<AppState>, action: AppAction): RecordOf<AppState> => {
+const reduce = (state: RecordOf<AppState>, action: Action): RecordOf<AppState> => {
   switch (action.type) {
     case 'add-message':
       return state.set('messages', state.messages.push(action.message));
@@ -413,11 +406,11 @@ describe('the withUndoRedo plugin', () => {
   });
 
   it('creates a context provider (1)', () => {
-    const empty: EmptyDispatcher = { dispatch: null };
+    const empty: EmptyDispatcher<Action> = { dispatch: null };
 
     const undoRedo   = withUndoRedo(reduce);
     const Component  = createContainer(Container, undoRedo, empty);
-    const dispatcher = empty as Dispatcher;
+    const dispatcher = empty as Dispatcher<Action>;
 
     const { queryByText } = render(
       <Component initialState={state} />
@@ -435,11 +428,11 @@ describe('the withUndoRedo plugin', () => {
   });
 
   it('creates a context provider (2)', () => {
-    const empty: EmptyDispatcher = { dispatch: null };
+    const empty: EmptyDispatcher<Action> = { dispatch: null };
 
     const undoRedo   = withUndoRedo(reduce);
     const Component  = createContainer(Container, undoRedo, empty);
-    const dispatcher = empty as Dispatcher;
+    const dispatcher = empty as Dispatcher<Action>;
 
     const { queryByText } = render(
       <Component initialState={state} />

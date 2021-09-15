@@ -1,6 +1,9 @@
 import { Context, useEffect, useState, useMemo } from 'react';
 import { createPlugin } from './create-plugin';
 import invariant from 'tiny-invariant';
+import type {
+  Action, Reducer, UsePlugin, WithPlugin
+} from './typings';
 
 // ---------------------------------------------------------------------
 
@@ -154,7 +157,7 @@ const defaults = {
 // ---------------------------------------------------------------------
 
 const [ withAutoSave, useAutoSave, saveContext ]
-  : [ WithPlugin<any, SaveOpts>, UsePlugin<SaveCtx>, Context<SaveCtx> ]
+  : [ WithPlugin<any, SaveOpts, Action>, UsePlugin<SaveCtx>, Context<SaveCtx> ]
   = createPlugin(wrapReducer, useValue, defaults);
 
 export { withAutoSave, useAutoSave, saveContext };

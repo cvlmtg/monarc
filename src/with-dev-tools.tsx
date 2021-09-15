@@ -1,4 +1,5 @@
 import type { EnhancerOptions } from 'redux-devtools-extension';
+import type { Action, Reducer } from './typings';
 import type * as Immutable from 'immutable';
 
 import Serialize from '@redux-devtools/serialize';
