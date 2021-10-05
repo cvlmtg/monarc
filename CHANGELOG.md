@@ -1,3 +1,9 @@
+## [3.2.1] - 2021-10-05
+
+### Changed
+
+- Update dependencies
+
 ## [3.2.0] - 2021-09-15
 
 ### Fixed
