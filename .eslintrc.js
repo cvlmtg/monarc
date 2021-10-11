@@ -12,6 +12,9 @@ module.exports = {
     'plugin:import/typescript'
   ],
   settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': [ '.ts', '.tsx' ]
+    },
     react: {
       version: 'detect'
     }
