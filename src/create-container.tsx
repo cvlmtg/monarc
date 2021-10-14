@@ -15,6 +15,8 @@ type Container<S> = FunctionComponent<{
 
 // ---------------------------------------------------------------------
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export function createContainer<S, A extends Action>(
   Component: ComponentType<{ store: S }>,
   anyReducer: AnyReducer<S, A>,
@@ -26,8 +28,6 @@ export function createContainer<S, A extends Action>(
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
-
-    const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
     useIsomorphicLayoutEffect(() => {
       if (dispatcher) {
