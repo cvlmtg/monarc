@@ -18,7 +18,7 @@ function reduce(state: RecordOf<AppState>, action: Action): RecordOf<AppState> {
   }
 }
 
-const AppState = Record<AppState>({
+const StateFactory = Record<AppState>({
   count: 1
 });
 
@@ -28,7 +28,7 @@ describe('the withAutoSave plugin', () => {
   let state: RecordOf<AppState>;
 
   beforeEach(() => {
-    state = new AppState();
+    state = new StateFactory();
   });
 
   it('extends one or more reducers', () => {

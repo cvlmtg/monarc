@@ -2,7 +2,7 @@ import type { Action, AnyReducer, EmptyDispatcher } from './typings';
 import { splitReducer } from './create-plugin';
 import { storeContext } from './context';
 import React, {
-  useLayoutEffect, useReducer, useMemo,
+  useLayoutEffect, useEffect, useReducer, useMemo,
   ComponentType, FunctionComponent
 } from 'react';
 
@@ -14,6 +14,8 @@ type Container<S> = FunctionComponent<{
 }>;
 
 // ---------------------------------------------------------------------
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export function createContainer<S, A extends Action>(
   Component: ComponentType<{ store: S }>,
@@ -27,7 +29,7 @@ export function createContainer<S, A extends Action>(
 
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (dispatcher) {
         dispatcher.dispatch = dispatch;
       }
