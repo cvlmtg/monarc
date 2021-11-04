@@ -1,3 +1,9 @@
+## [3.2.2] - 2021-11-04
+
+### Changed
+
+- Add useIsomorphicLayoutEffect to support SSR
+
 ## [3.2.1] - 2021-10-05
 
 ### Changed
