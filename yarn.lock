@@ -1158,9 +1158,9 @@
     fastq "^1.6.0"
 
 "@redux-devtools/serialize@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.3.0.tgz#b194e2f6c2ac064c83d6e28f5b9584cbc9f25633"
-  integrity sha512-CcpqmqhhmJbiy1hm80+BkRI4AoFimC+QS/K6h49qqwAT/+P3d+EVIVHH5G3q5Xq8m7+crcu4GaqIBbTyrXr7Bw==
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.3.1.tgz#b16b9bebb9cb86e28144fe9778460c084fc07c24"
+  integrity sha512-8IIzVkyTRDKCMTkge3KJ+mCWoVnm1TarUbmkM7GRSjaVvVj1r/GRt0XnYrIJAqL1yPKsmgs1BQSJZrDgHh6npw==
   dependencies:
     jsan "^3.1.13"
 
