@@ -4,3 +4,4 @@ export * from './with-undo-redo';
 export * from './with-auto-save';
 export * from './with-dev-tools';
 export * from './context';
+export * from './typings';
