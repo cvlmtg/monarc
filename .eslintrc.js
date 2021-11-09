@@ -42,7 +42,6 @@ module.exports = {
     ecmaVersion: 2018
   },
   rules: {
-    'accessor-pairs': 'error',
     'array-bracket-newline': [
       'error',
       'consistent'
@@ -80,7 +79,6 @@ module.exports = {
         allowSingleLine: true
       }
     ],
-    'callback-return': 'off',
     camelcase: [
       'error',
       {
@@ -178,7 +176,6 @@ module.exports = {
         ObjectExpression: 1
       }
     ],
-    'indent-legacy': 'off',
     'init-declarations': 'off',
     'jsx-quotes': 'error',
     'key-spacing': [
@@ -515,7 +512,10 @@ module.exports = {
     'space-unary-ops': 'error',
     'spaced-comment': [
       'error',
-      'always'
+      'always',
+      {
+        markers: [ '/' ]
+      }
     ],
     strict: 'error',
     'switch-colon-spacing': 'error',
