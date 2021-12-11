@@ -1,4 +1,4 @@
-import { useContext, createContext } from 'react';
+import { useContext, createContext, useCallback } from 'react';
 import type { Action, Dispatch } from './typings';
 
 // ---------------------------------------------------------------------
@@ -18,7 +18,13 @@ export const storeContext = createContext<StoreContext<any, any>>({
 export function useDispatch<A extends Action>(): Dispatch<A> {
   const { dispatch } = useContext(storeContext);
 
-  return dispatch;
+  return useCallback((action: A | Promise<A>) => {
+    if (typeof action.then === 'function') {
+      action.then(dispatch);
+    } else {
+      dispatch(action);
+    }
+  }, [ dispatch ]);
 }
 
 export function useStore<S, A extends Action>(): S {
