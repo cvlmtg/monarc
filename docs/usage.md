@@ -244,7 +244,7 @@ MONARC provides some hooks to access its state on every functional component of 
 
 - **useDispatch**
 
-  Returns the dispatcher function needed to dispatch actions to the store.
+  Returns the dispatcher function needed to dispatch actions to the store. It accepts an action or a Promise that resolves to an action. The latter can be useful for asynchronous actions, e.g. actions fetching data from your API.
 
 - **useUndoRedo**
 
