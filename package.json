@@ -20,7 +20,7 @@
     "build": "dts build --rollupTypes",
     "clean": "rm -rf dist",
     "lint": "dts lint src/ test/",
-    "prepare": "dts build",
+    "prepare": "dts build --rollupTypes",
     "size": "size-limit",
     "start": "dts watch",
     "test": "dts test --passWithNoTests"
