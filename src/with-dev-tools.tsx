@@ -1,8 +1,8 @@
 import type { EnhancerOptions } from 'redux-devtools-extension';
 import type { Action, Reducer } from './typings';
-import type * as Immutable from 'immutable';
+import type Immutable from 'immutable';
 
-import Serialize from '@redux-devtools/serialize';
+import { immutable } from '@redux-devtools/serialize';
 import { useDispatch, useStore } from './context';
 import { createPlugin } from './create-plugin';
 import { useEffect } from 'react';
@@ -109,7 +109,7 @@ function useValue(ps: Partial<DevState>, options: ImmutableOpts): void {
     let parse: (state: string) => any;
 
     if (serialize.immutable) {
-      const serializer = Serialize.immutable(serialize.immutable, serialize.refs);
+      const serializer = immutable(serialize.immutable, serialize.refs);
 
       parse = serializer.parse;
     } else {
