@@ -17,7 +17,7 @@ export type ReducerProvider<S, A extends Action> = {
   ps?: PluginState;
 };
 
-export type Dispatch<A extends Action> = (action: A) => void;
+export type Dispatch<A extends Action> = (action: A | Promise<A>) => void;
 export type Reducer<S, A extends Action> = (state: S, action: A) => S;
 export type AnyReducer<S, A extends Action> = ReducerProvider<S, A> | Array<Reducer<S, A>> | Reducer<S, A>;
 

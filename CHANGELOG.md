@@ -1,3 +1,13 @@
+## [3.3.0] - 2022-01-02
+
+### Added
+
+- Allow to pass a promise to the dispatch function.
+
+### Changed
+
+- Upgrade dts-cli to version 1.1.x
+
 ## [3.2.3] - 2021-11-09
 
 ### Fixed

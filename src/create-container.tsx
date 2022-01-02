@@ -8,14 +8,18 @@ import React, {
 
 // ---------------------------------------------------------------------
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+function isPromise(value: Action | Promise<Action>): value is Promise<Action> {
+  return typeof value.then === 'function';
+}
+
 type Container<S> = FunctionComponent<{
   initialState: S;
   children?: unknown;
 }>;
 
 // ---------------------------------------------------------------------
-
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export function createContainer<S, A extends Action>(
   Component: ComponentType<{ store: S }>,
@@ -30,9 +34,17 @@ export function createContainer<S, A extends Action>(
     const value = useMemo(() => ({ state, dispatch }), [ state ]);
 
     useIsomorphicLayoutEffect(() => {
-      if (dispatcher) {
-        dispatcher.dispatch = dispatch;
+      if (typeof dispatcher === 'undefined') {
+        return;
       }
+
+      dispatcher.dispatch = (action: A | Promise<A>) => {
+        if (isPromise(action)) {
+          action.then(dispatch);
+        } else {
+          dispatch(action);
+        }
+      };
     }, []);
 
     return (
