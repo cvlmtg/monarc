@@ -10,17 +10,14 @@
   },
   "license": "MIT",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
   "module": "dist/monarc.esm.js",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=10"
-  },
   "scripts": {
     "analyze": "size-limit --why",
-    "build": "dts build",
+    "build": "dts build --rollupTypes",
     "clean": "rm -rf dist",
     "lint": "dts lint src/ test/",
     "prepare": "dts build",
@@ -43,8 +40,14 @@
     "flux",
     "redux"
   ],
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
+  "engines": {
+    "node": ">=12"
+  },
   "peerDependencies": {
-    "react": ">=17.0"
+    "react": ">=17"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.5",
