@@ -1,6 +1,6 @@
 {
   "name": "monarc",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "MONARC's Obviously Not A Redux Clone",
   "author": "Matteo Cavalleri",
   "homepage": "https://cvlmtg.github.io/monarc/",
@@ -20,7 +20,7 @@
     "build": "dts build --rollupTypes",
     "clean": "rm -rf dist",
     "lint": "dts lint src/ test/",
-    "prepare": "dts build",
+    "prepare": "dts build --rollupTypes",
     "size": "size-limit",
     "start": "dts watch",
     "test": "dts test --passWithNoTests"

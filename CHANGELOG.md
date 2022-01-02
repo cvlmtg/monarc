@@ -1,3 +1,9 @@
+## [3.3.1] - 2022-01-02
+
+### Fixed
+
+- Add missing option when preparing npm package
+
 ## [3.3.0] - 2022-01-02
 
 ### Added
