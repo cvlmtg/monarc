@@ -1158,11 +1158,11 @@
     fastq "^1.6.0"
 
 "@redux-devtools/serialize@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.3.1.tgz#b16b9bebb9cb86e28144fe9778460c084fc07c24"
-  integrity sha512-8IIzVkyTRDKCMTkge3KJ+mCWoVnm1TarUbmkM7GRSjaVvVj1r/GRt0XnYrIJAqL1yPKsmgs1BQSJZrDgHh6npw==
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.3.2.tgz#57a3ef887ce36fa4b00d65bc91a825b008a1b5af"
+  integrity sha512-UgqSFn4WjiZSvrjRBIduaYMyGegiJV2HyCV5zxlm9If0AlTQ+MaGShHLwB3u7rFTJhYx3CZoxaMd6ux00tYRtA==
   dependencies:
-    jsan "^3.1.13"
+    jsan "^3.1.14"
 
 "@rollup/plugin-babel@^5.3.0":
   version "5.3.0"
@@ -4096,7 +4096,7 @@ js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-jsan@^3.1.13, jsan@^3.1.14:
+jsan@^3.1.14:
   version "3.1.14"
   resolved "https://registry.yarnpkg.com/jsan/-/jsan-3.1.14.tgz#197fee2d260b85acacb049c1ffa41bd09fb1f213"
   integrity sha512-wStfgOJqMv4QKktuH273f5fyi3D3vy2pHOiSDGPvpcS/q+wb/M7AK3vkCcaHbkZxDOlDU/lDJgccygKSG2OhtA==
