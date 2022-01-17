@@ -877,7 +877,7 @@
     core-js-pure "^3.19.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.16.7", "@babel/runtime@^7.8.4":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
   integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
@@ -1157,12 +1157,13 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@redux-devtools/serialize@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.3.1.tgz#b16b9bebb9cb86e28144fe9778460c084fc07c24"
-  integrity sha512-8IIzVkyTRDKCMTkge3KJ+mCWoVnm1TarUbmkM7GRSjaVvVj1r/GRt0XnYrIJAqL1yPKsmgs1BQSJZrDgHh6npw==
+"@redux-devtools/serialize@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.4.0.tgz#e133212a5ea6ff754688dfaddafaf039d5838ecd"
+  integrity sha512-esKKlaF2r9nkP5NR6AosFyZ32qCiiqYPF9eX8a39KCv5O8oL2m/5X2MkknME8nZ/0C/zvQRULJtnPUWAsxkM7Q==
   dependencies:
-    jsan "^3.1.13"
+    "@babel/runtime" "^7.16.7"
+    jsan "^3.1.14"
 
 "@rollup/plugin-babel@^5.3.0":
   version "5.3.0"
@@ -4096,7 +4097,7 @@ js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-jsan@^3.1.13, jsan@^3.1.14:
+jsan@^3.1.14:
   version "3.1.14"
   resolved "https://registry.yarnpkg.com/jsan/-/jsan-3.1.14.tgz#197fee2d260b85acacb049c1ffa41bd09fb1f213"
   integrity sha512-wStfgOJqMv4QKktuH273f5fyi3D3vy2pHOiSDGPvpcS/q+wb/M7AK3vkCcaHbkZxDOlDU/lDJgccygKSG2OhtA==
