@@ -1158,9 +1158,9 @@
     fastq "^1.6.0"
 
 "@redux-devtools/serialize@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.4.0.tgz#e133212a5ea6ff754688dfaddafaf039d5838ecd"
-  integrity sha512-esKKlaF2r9nkP5NR6AosFyZ32qCiiqYPF9eX8a39KCv5O8oL2m/5X2MkknME8nZ/0C/zvQRULJtnPUWAsxkM7Q==
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@redux-devtools/serialize/-/serialize-0.4.1.tgz#3cec8de9a1bda21f70f624c91098bc24eeb64ce6"
+  integrity sha512-Bfy2ka6OJiBwAYifADVZ8kUf9FPBPB4aIMqVtT3gR13Gzv8MvdESzp9IQp9v3dp0UsMurMGnb/AYS1DS8C8p7w==
   dependencies:
     "@babel/runtime" "^7.16.7"
     jsan "^3.1.14"
