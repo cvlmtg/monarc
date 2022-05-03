@@ -46,9 +46,7 @@ function save(ps: SaveState, onSave: SaveFn, onBeforeUpdate?: boolean) {
   }
 
   if (onSave.length === 2) {
-    onSave(ps.state, () => {
-      ps.render();
-    });
+    onSave(ps.state, ps.render);
     return;
   }
 
@@ -129,7 +127,7 @@ function useValue(ps: Partial<SaveState>, options: SaveOpts): SaveCtx {
   // component and the store container) and react doesn't like it...
 
   useEffect(() => {
-    PS.render = (): void => setCounter(counter + 1);
+    PS.render = () => setCounter(counter + 1);
   }, [ counter ]); // eslint-disable-line
 
   // save our state on unmount if there's a timer active
