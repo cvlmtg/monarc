@@ -50,26 +50,26 @@
     "react": ">=17"
   },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^7.0.5",
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@testing-library/react": "^12.1.3",
+    "@testing-library/user-event": "^13.5.0",
     "@tsconfig/create-react-app": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
     "@types/jsan": "^3.1.2",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "dts-cli": "^1.1.6",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^18.0.3",
+    "dts-cli": "^1.5.1",
     "husky": "^7.0.4",
     "immutable": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "redux-devtools-extension": "^2.13.9",
-    "size-limit": "^7.0.5",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.4"
+    "size-limit": "^7.0.8",
+    "tslib": "^2.4.0",
+    "typescript": "^4.6.4"
   },
   "dependencies": {
-    "@redux-devtools/serialize": "^0.4.0",
+    "@redux-devtools/serialize": "^0.4.1",
     "jsan": "^3.1.14",
     "tiny-invariant": "^1.2.0"
   },
