@@ -50,15 +50,15 @@ export function splitReducer<S, A extends Action>(
 
 function full<S, O, C, A extends Action>(
   wrapReducer: WrapReducer<S, O, A>,
-  useValue: UseValue<O>,
+  useValue: UseValue<O, C>,
   defaults?: Partial<O>
 ): [
   WithPlugin<S, O, A>,
   UsePlugin<C>,
   Context<C>
 ] {
-  const initContext = createContext<unknown>(null);
-  const useInit     = () => useContext(initContext);
+  const context   = createContext<unknown>(null) as Context<C>;
+  const usePlugin = () => useContext(context);
 
   const withPlugin = (anyReducer: AnyReducer<S, A>, options?: Partial<O>) => {
     const [ reducer, Provider ] = splitReducer<S, A>(anyReducer);
@@ -71,11 +71,11 @@ function full<S, O, C, A extends Action>(
       const value = useValue(ps, opts);
 
       return (
-        <initContext.Provider value={value}>
+        <context.Provider value={value}>
           <Provider>
             {children}
           </Provider>
-        </initContext.Provider>
+        </context.Provider>
       );
     };
 
@@ -85,9 +85,6 @@ function full<S, O, C, A extends Action>(
 
     return { reducer: wrapped, Provider: PluginProvider };
   };
-
-  const context   = initContext as Context<C>;
-  const usePlugin = useInit as UsePlugin<C>;
 
   return [ withPlugin, usePlugin, context ];
 }
@@ -124,7 +121,7 @@ export function createPlugin<S, O, A extends Action>(
 
 export function createPlugin<S, O, C, A extends Action>(
   wrapReducer: WrapReducer<S, O, A>,
-  useValue: UseValue<O>,
+  useValue: UseValue<O, C>,
   defaults?: Partial<O>
 ): [
   WithPlugin<S, O, A>,
@@ -134,7 +131,7 @@ export function createPlugin<S, O, C, A extends Action>(
 
 export function createPlugin<S, O, C, A extends Action>(
   wrapReducer: WrapReducer<S, O, A>,
-  useValue?: UseValue<O> | Partial<O>,
+  useValue?: UseValue<O, C> | Partial<O>,
   defaults?: Partial<O>
 ): [
   WithPlugin<S, O, A>,
