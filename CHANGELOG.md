@@ -1,3 +1,10 @@
+## [3.3.2] - 2023-01-09
+
+### Changed
+
+- Misc optimizations
+- Dependencies updated
+
 ## [3.3.1] - 2022-01-02
 
 ### Fixed
