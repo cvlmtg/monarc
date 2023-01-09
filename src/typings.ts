@@ -30,10 +30,10 @@ export type WrapReducer<S, O, A extends Action> = (
   options: O
 ) => Reducer<S, A>;
 
-export type UseValue<O> = (
+export type UseValue<O, C> = (
   ps: Partial<PluginState>,
   options: O
-) => unknown;
+) => C;
 
 export type WithPlugin<S, O, A extends Action> = (
   anyReducer: AnyReducer<S, A>,

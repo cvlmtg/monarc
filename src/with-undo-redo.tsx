@@ -97,6 +97,7 @@ function wrapReducer(
         if (typeof next !== 'undefined') {
           return SET(next, state);
         }
+
         return state;
 
       case REDO:
@@ -111,6 +112,7 @@ function wrapReducer(
         if (typeof next !== 'undefined') {
           return SET(next, state);
         }
+
         return state;
 
       default:
@@ -135,10 +137,8 @@ function wrapReducer(
         }
 
         PS.prev = action.type;
-        break;
+        return updated;
     }
-
-    return updated;
   };
 }
 
